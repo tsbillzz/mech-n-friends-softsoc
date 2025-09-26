@@ -123,7 +123,6 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
                       key={JSON.stringify(filteredFloor?.pcs)} 
                       originalPcs={originalFloor?.pcs || []}
                       filteredPcs={filteredFloor?.pcs || []}
-                      floorImagePath={floor.mapImagePath}
                       isFiltered={selectedSoftware.length > 0}
                     />
                   </TabsContent>
