@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
 import { getForecast } from '@/app/actions';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Lightbulb, Loader2 } from 'lucide-react';
-import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 const daysOfWeek = [
@@ -31,7 +31,7 @@ function SubmitButton() {
 
 export default function AvailabilityForecaster({ buildingName }: { buildingName: string }) {
   const initialState = { message: '', errors: {} };
-  const [state, dispatch] = useFormState(getForecast, initialState);
+  const [state, dispatch] = useActionState(getForecast, initialState);
   const { toast } = useToast();
 
   useEffect(() => {
