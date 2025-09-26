@@ -1,6 +1,6 @@
 export type PC = {
   id: string;
-  status: 'available' | 'occupied';
+  status: 'available' | 'occupied' | 'broken';
   position: { top: string; left: string };
   software: string[];
 };
@@ -46,9 +46,11 @@ const generatePcs = (count: number, prefix: string): PC[] => {
       software.push('Microsoft Office'); // Ensure at least one software
     }
 
+    const randomStatus = Math.random();
+
     return {
       id: `${prefix}-PC-${i + 1}`,
-      status: Math.random() > 0.5 ? 'available' : 'occupied',
+      status: randomStatus > 0.5 ? 'available' : 'occupied',
       position: {
         top: `${Math.floor(Math.random() * 80) + 10}%`,
         left: `${Math.floor(Math.random() * 90) + 5}%`,

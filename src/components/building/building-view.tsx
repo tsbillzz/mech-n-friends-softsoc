@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, Triangle } from 'lucide-react';
 import FloorPlan from './floor-plan';
 import AvailabilityForecaster from '../forecaster/availability-forecaster';
 
@@ -34,9 +34,18 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
         const floor = newBuildingData.floors[randomFloorIndex];
 
         if (floor && floor.pcs.length > 0) {
-          const randomPcIndex = Math.floor(Math.random() * floor.pcs.length);
-          const pc = floor.pcs[randomPcIndex];
-          pc.status = pc.status === 'available' ? 'occupied' : 'available';
+          // Find a PC that is not broken to toggle its status
+          const nonBrokenPcs = floor.pcs.filter((pc: { status: string; }) => pc.status !== 'broken');
+          if (nonBrokenPcs.length > 0) {
+            const randomPcIndex = Math.floor(Math.random() * nonBrokenPcs.length);
+            const pcToToggle = nonBrokenPcs[randomPcIndex];
+            
+            // Find the original PC in the array to modify it
+            const originalPc = floor.pcs.find((p: { id: any; }) => p.id === pcToToggle.id);
+            if (originalPc) {
+              originalPc.status = originalPc.status === 'available' ? 'occupied' : 'available';
+            }
+          }
         }
         
         return newBuildingData;
@@ -53,6 +62,20 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
         : [...prev, software]
     );
   };
+  
+  const handleToggleBrokenStatus = (pcId: string) => {
+    setLocalBuilding(currentBuilding => {
+      const newBuildingData = JSON.parse(JSON.stringify(currentBuilding));
+      for (const floor of newBuildingData.floors) {
+        const pc = floor.pcs.find((p: { id: string; }) => p.id === pcId);
+        if (pc) {
+          pc.status = pc.status === 'broken' ? 'available' : 'broken';
+          break;
+        }
+      }
+      return newBuildingData;
+    });
+  };
 
   const filteredBuilding = useMemo(() => {
     if (selectedSoftware.length === 0) {
@@ -63,7 +86,9 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
       floors: localBuilding.floors.map(floor => ({
         ...floor,
         pcs: floor.pcs.filter(pc =>
-          pc.status === 'available' && selectedSoftware.every(s => pc.software.includes(s))
+          pc.status !== 'broken' && 
+          pc.status === 'available' && 
+          selectedSoftware.every(s => pc.software.includes(s))
         ),
       })),
     };
@@ -98,6 +123,10 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
             <span className="text-sm">Occupied</span>
           </div>
           <div className="flex items-center gap-2">
+            <Triangle className="w-4 h-4 text-yellow-500 fill-current" />
+            <span className="text-sm">Broken</span>
+          </div>
+          <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded-full bg-gray-400" />
             <span className="text-sm">Filtered Out</span>
           </div>
@@ -124,6 +153,7 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
                       originalPcs={originalFloor?.pcs || []}
                       filteredPcs={filteredFloor?.pcs || []}
                       isFiltered={selectedSoftware.length > 0}
+                      onToggleBrokenStatus={handleToggleBrokenStatus}
                     />
                   </TabsContent>
                 )
