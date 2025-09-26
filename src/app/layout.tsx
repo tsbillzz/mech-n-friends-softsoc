@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'Sydney PC Finder',
-  description: 'Find available PCs at the University of Sydney.',
+  title: 'Campus Computers',
+  description: 'Find available PCs on campus.',
 };
 
 export default function RootLayout({
