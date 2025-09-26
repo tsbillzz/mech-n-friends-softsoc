@@ -1,6 +1,6 @@
 export type PC = {
   id: string;
-  status: 'available' | 'occupied' | 'broken';
+  status: 'available' | 'occupied' | 'broken' | 'under maintenance';
   position: { top: string; left: string };
   software: string[];
 };

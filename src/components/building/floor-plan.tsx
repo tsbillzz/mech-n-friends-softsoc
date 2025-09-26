@@ -7,9 +7,10 @@ type FloorPlanProps = {
   filteredPcs: PC[];
   isFiltered: boolean;
   onToggleBrokenStatus: (pcId: string) => void;
+  onToggleMaintenanceStatus: (pcId: string) => void;
 };
 
-export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onToggleBrokenStatus }: FloorPlanProps) {
+export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onToggleBrokenStatus, onToggleMaintenanceStatus }: FloorPlanProps) {
   const filteredPcIds = new Set(filteredPcs.map(p => p.id));
 
   const pcsToDisplay = isFiltered 
@@ -17,6 +18,8 @@ export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onTogg
         ...pc,
         status: pc.status === 'broken'
           ? 'broken'
+          : pc.status === 'under maintenance'
+          ? 'under maintenance'
           : pc.status === 'occupied' 
           ? 'occupied' 
           : (filteredPcIds.has(pc.id) ? 'available' : 'filtered'),
@@ -31,7 +34,8 @@ export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onTogg
             <PCStatus 
               key={pc.id} 
               pc={pc} 
-              onToggleBrokenStatus={onToggleBrokenStatus} 
+              onToggleBrokenStatus={onToggleBrokenStatus}
+              onToggleMaintenanceStatus={onToggleMaintenanceStatus}
             />
           ))}
         </div>

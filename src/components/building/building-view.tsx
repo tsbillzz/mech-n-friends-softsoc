@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import type { Building } from '@/lib/data';
+import type { Building, PC } from '@/lib/data';
 import { allSoftware } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, SlidersHorizontal, Triangle } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, Triangle, Wrench } from 'lucide-react';
 import FloorPlan from './floor-plan';
 import AvailabilityForecaster from '../forecaster/availability-forecaster';
+import AdminLoginModal from './admin-login-modal';
 
 type BuildingViewProps = {
   building: Building;
@@ -20,6 +21,8 @@ type BuildingViewProps = {
 export default function BuildingView({ building, onBack }: BuildingViewProps) {
   const [localBuilding, setLocalBuilding] = useState(building);
   const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [selectedPc, setSelectedPc] = useState<PC | null>(null);
   const defaultTab = building.floors[0]?.id;
 
   useEffect(() => {
@@ -34,13 +37,11 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
         const floor = newBuildingData.floors[randomFloorIndex];
 
         if (floor && floor.pcs.length > 0) {
-          // Find a PC that is not broken to toggle its status
-          const nonBrokenPcs = floor.pcs.filter((pc: { status: string; }) => pc.status !== 'broken');
-          if (nonBrokenPcs.length > 0) {
-            const randomPcIndex = Math.floor(Math.random() * nonBrokenPcs.length);
-            const pcToToggle = nonBrokenPcs[randomPcIndex];
+          const nonSpecialStatusPcs = floor.pcs.filter((pc: { status: string; }) => pc.status !== 'broken' && pc.status !== 'under maintenance');
+          if (nonSpecialStatusPcs.length > 0) {
+            const randomPcIndex = Math.floor(Math.random() * nonSpecialStatusPcs.length);
+            const pcToToggle = nonSpecialStatusPcs[randomPcIndex];
             
-            // Find the original PC in the array to modify it
             const originalPc = floor.pcs.find((p: { id: any; }) => p.id === pcToToggle.id);
             if (originalPc) {
               originalPc.status = originalPc.status === 'available' ? 'occupied' : 'available';
@@ -76,6 +77,35 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
       return newBuildingData;
     });
   };
+  
+  const handleOpenMaintenanceModal = (pcId: string) => {
+    for (const floor of localBuilding.floors) {
+      const pc = floor.pcs.find(p => p.id === pcId);
+      if (pc) {
+        setSelectedPc(pc);
+        setIsLoginModalOpen(true);
+        break;
+      }
+    }
+  };
+
+  const handleToggleMaintenanceStatus = () => {
+    if (!selectedPc) return;
+    
+    setLocalBuilding(currentBuilding => {
+      const newBuildingData = JSON.parse(JSON.stringify(currentBuilding));
+      for (const floor of newBuildingData.floors) {
+        const pc = floor.pcs.find((p: { id: string; }) => p.id === selectedPc.id);
+        if (pc) {
+          pc.status = pc.status === 'under maintenance' ? 'available' : 'under maintenance';
+          break;
+        }
+      }
+      return newBuildingData;
+    });
+    setIsLoginModalOpen(false);
+    setSelectedPc(null);
+  };
 
   const filteredBuilding = useMemo(() => {
     if (selectedSoftware.length === 0) {
@@ -87,6 +117,7 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
         ...floor,
         pcs: floor.pcs.filter(pc =>
           pc.status !== 'broken' && 
+          pc.status !== 'under maintenance' &&
           pc.status === 'available' && 
           selectedSoftware.every(s => pc.software.includes(s))
         ),
@@ -127,6 +158,10 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
             <span className="text-sm">Broken</span>
           </div>
           <div className="flex items-center gap-2">
+            <Wrench className="w-4 h-4 text-blue-500" />
+            <span className="text-sm">Maintenance</span>
+          </div>
+          <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded-full bg-gray-400" />
             <span className="text-sm">Filtered Out</span>
           </div>
@@ -154,6 +189,7 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
                       filteredPcs={filteredFloor?.pcs || []}
                       isFiltered={selectedSoftware.length > 0}
                       onToggleBrokenStatus={handleToggleBrokenStatus}
+                      onToggleMaintenanceStatus={handleOpenMaintenanceModal}
                     />
                   </TabsContent>
                 )
@@ -186,6 +222,14 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
           <AvailabilityForecaster buildingName={localBuilding.name} />
         </div>
       </div>
+      {selectedPc && (
+        <AdminLoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          onSuccess={handleToggleMaintenanceStatus}
+          pc={selectedPc}
+        />
+      )}
     </div>
   );
 }
