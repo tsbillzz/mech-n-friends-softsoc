@@ -16,6 +16,8 @@ export type Building = {
   name: string;
   position: { top: string; left: string };
   floors: Floor[];
+  dimensions?: { width: string; height: string };
+  className?: string;
 };
 
 const generatePcs = (count: number, prefix: string): PC[] => {
@@ -34,6 +36,8 @@ export const buildings: Building[] = [
     id: 'fisher',
     name: 'Fisher Library',
     position: { top: '30%', left: '40%' },
+    dimensions: { width: '150px', height: '100px' },
+    className: 'transform -skew-x-12',
     floors: [
       {
         id: 'f-1',
@@ -53,6 +57,7 @@ export const buildings: Building[] = [
     id: 'scitech',
     name: 'SciTech Library',
     position: { top: '65%', left: '60%' },
+    dimensions: { width: '120px', height: '80px' },
     floors: [
       {
         id: 's-3',
