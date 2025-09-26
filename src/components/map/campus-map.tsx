@@ -37,7 +37,7 @@ const BuildingShape = ({ building, onSelect }: { building: Building; onSelect: (
 };
 
 export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProps) {
-  const mapImagePath = 'https://picsum.photos/seed/campusmap/1200/800';
+  const mapImagePath = '/images/campusmap.png';
 
   return (
     <Card className="overflow-hidden shadow-xl">
