@@ -30,6 +30,12 @@ const availableSoftware = [
   'Visual Studio Code',
   'R Studio',
   'Final Cut Pro',
+  'StarOffice',
+  'NVivo',
+  'EndNote',
+  'Mathematica',
+  'SAS',
+  'Zoom',
 ];
 
 const generatePcs = (count: number, prefix: string): PC[] => {
@@ -61,13 +67,13 @@ export const buildings: Building[] = [
     className: 'transform -skew-x-12',
     floors: [
       {
-        id: 'f-1',
-        name: 'Floor 1',
+        id: 'f-3',
+        name: 'Floor 3',
         mapImageId: 'fisher-floor-1',
         pcs: generatePcs(30, 'F1'),
       },
       {
-        id: 'f-3',
+        id: 'f-3-2',
         name: 'Floor 3',
         mapImageId: 'fisher-floor-2',
         pcs: generatePcs(40, 'F3'),
