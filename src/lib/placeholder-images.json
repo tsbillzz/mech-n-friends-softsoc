@@ -8,7 +8,7 @@
     },
     {
       "id": "fisher-floor-1",
-      "description": "Floor 1 plan of Fisher Library.",
+      "description": "FisherL3",
       "imageUrl": "/images/fisher-floor-1.jpg",
       "imageHint": "floor plan"
     },
@@ -20,7 +20,7 @@
     },
     {
       "id": "scitech-floor-3",
-      "description": "Floor 3 plan of SciTech Library.",
+      "description": "ScitechL1",
       "imageUrl": "/images/scitech-floor-3.jpg",
       "imageHint": "floor plan"
     }

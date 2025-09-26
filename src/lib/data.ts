@@ -46,10 +46,10 @@ export const buildings: Building[] = [
         pcs: generatePcs(30, 'F1'),
       },
       {
-        id: 'f-2',
-        name: 'Floor 2',
+        id: 'f-3',
+        name: 'Floor 3',
         mapImageId: 'fisher-floor-2',
-        pcs: generatePcs(40, 'F2'),
+        pcs: generatePcs(40, 'F3'),
       },
     ],
   },
@@ -61,7 +61,7 @@ export const buildings: Building[] = [
     floors: [
       {
         id: 's-3',
-        name: 'Floor 3',
+        name: 'Level 3',
         mapImageId: 'scitech-floor-3',
         pcs: generatePcs(50, 'S3'),
       },
