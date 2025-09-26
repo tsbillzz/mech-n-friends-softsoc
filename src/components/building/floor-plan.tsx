@@ -1,19 +1,16 @@
 import Image from 'next/image';
 import type { PC } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import PCStatus from '../pc/pc-status';
 import { Card, CardContent } from '@/components/ui/card';
 
 type FloorPlanProps = {
   originalPcs: PC[];
   filteredPcs: PC[];
-  floorImageId: string;
+  floorImagePath: string;
   isFiltered: boolean;
 };
 
-export default function FloorPlan({ originalPcs, filteredPcs, floorImageId, isFiltered }: FloorPlanProps) {
-  const floorImage = PlaceHolderImages.find((img) => img.id === floorImageId);
-
+export default function FloorPlan({ originalPcs, filteredPcs, floorImagePath, isFiltered }: FloorPlanProps) {
   const filteredPcIds = new Set(filteredPcs.map(p => p.id));
 
   const pcsToDisplay = isFiltered 
@@ -29,13 +26,13 @@ export default function FloorPlan({ originalPcs, filteredPcs, floorImageId, isFi
     <Card className="shadow-lg">
       <CardContent className="p-4">
         <div className="relative w-full aspect-[5/3] rounded-md overflow-hidden bg-muted">
-          {floorImage && (
+          {floorImagePath && (
             <Image
-              src={floorImage.imageUrl}
-              alt={floorImage.description}
+              src={floorImagePath}
+              alt="Floor plan"
               fill
               className="object-cover"
-              data-ai-hint={floorImage.imageHint}
+              data-ai-hint="floor plan"
             />
           )}
           {pcsToDisplay.map((pc) => (

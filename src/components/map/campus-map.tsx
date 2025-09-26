@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { Building } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -38,7 +37,7 @@ const BuildingShape = ({ building, onSelect }: { building: Building; onSelect: (
 };
 
 export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProps) {
-  const mapImage = PlaceHolderImages.find((img) => img.id === 'campus-map');
+  const mapImagePath = '/images/campusmap.png';
 
   return (
     <Card className="overflow-hidden shadow-xl">
@@ -47,13 +46,13 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
       </CardHeader>
       <CardContent>
         <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden border">
-          {mapImage && (
+          {mapImagePath && (
             <Image
-              src={mapImage.imageUrl}
-              alt={mapImage.description}
+              src={mapImagePath}
+              alt="Campus map"
               fill
               className="object-cover"
-              data-ai-hint={mapImage.imageHint}
+              data-ai-hint="campus map"
             />
           )}
           <div className="absolute inset-0 bg-black/10" />
