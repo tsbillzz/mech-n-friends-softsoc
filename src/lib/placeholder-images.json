@@ -3,25 +3,25 @@
     {
       "id": "campus-map",
       "description": "A map of the University of Sydney campus.",
-      "imageUrl": "https://images.unsplash.com/photo-1726898983514-c5400b1de464?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y2FtcHVzJTIwbWFwfGVufDB8fHx8MTc1ODg2NjkxNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/campus-map.jpg",
       "imageHint": "campus map"
     },
     {
       "id": "fisher-floor-1",
       "description": "Floor 1 plan of Fisher Library.",
-      "imageUrl": "https://images.unsplash.com/photo-1542621334-a254cf47733d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmbG9vciUyMHBsYW58ZW58MHx8fHwxNzU4ODE1MjYzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/fisher-floor-1.jpg",
       "imageHint": "floor plan"
     },
     {
       "id": "fisher-floor-2",
       "description": "Floor 2 plan of Fisher Library.",
-      "imageUrl": "https://images.unsplash.com/photo-1608303588026-884930af2559?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmbG9vciUyMHBsYW58ZW58MHx8fHwxNzU4ODE1MjYzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/fisher-floor-2.jpg",
       "imageHint": "floor plan"
     },
     {
       "id": "scitech-floor-3",
       "description": "Floor 3 plan of SciTech Library.",
-      "imageUrl": "https://images.unsplash.com/photo-1721244653627-90b840127a7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Zmxvb3IlMjBwbGFufGVufDB8fHx8MTc1ODgxNTI2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/scitech-floor-3.jpg",
       "imageHint": "floor plan"
     }
   ]
