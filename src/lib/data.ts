@@ -69,13 +69,13 @@ export const buildings: Building[] = [
       {
         id: 'f-3',
         name: 'Floor 3',
-        mapImagePath: '/images/fisher-floor-1.jpg',
+        mapImagePath: 'https://picsum.photos/seed/fisher1/1000/600',
         pcs: generatePcs(30, 'F1'),
       },
       {
         id: 'f-3-2',
         name: 'Floor 3',
-        mapImagePath: '/images/fisher-floor-2.jpg',
+        mapImagePath: 'https://picsum.photos/seed/fisher2/1000/600',
         pcs: generatePcs(40, 'F3'),
       },
     ],
@@ -89,7 +89,7 @@ export const buildings: Building[] = [
       {
         id: 's-3',
         name: 'Level 3',
-        mapImagePath: '/images/scitech-floor-3.jpg',
+        mapImagePath: 'https://picsum.photos/seed/scitech1/1000/600',
         pcs: generatePcs(50, 'S3'),
       },
     ],
@@ -104,13 +104,13 @@ export const buildings: Building[] = [
       {
         id: 'l-1',
         name: 'Level 1',
-        mapImagePath: '/images/law-floor-1.jpg',
+        mapImagePath: 'https://picsum.photos/seed/law1/1000/600',
         pcs: generatePcs(25, 'L1'),
       },
       {
         id: 'l-2',
         name: 'Level 2',
-        mapImagePath: '/images/law-floor-2.jpg',
+        mapImagePath: 'https://picsum.photos/seed/law2/1000/600',
         pcs: generatePcs(35, 'L2'),
       },
     ],
