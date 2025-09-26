@@ -115,6 +115,51 @@ export const buildings: Building[] = [
       },
     ],
   },
+  {
+    id: 'belinda-hutchinson',
+    name: 'Belinda Hutchinson Building',
+    position: { top: '10%', left: '15%' },
+    dimensions: { width: '180px', height: '70px' },
+    className: 'rounded-lg',
+    floors: [
+      {
+        id: 'bh-1',
+        name: 'Level 1',
+        mapImagePath: '/images/placeholder-floor.png',
+        pcs: generatePcs(45, 'BH1'),
+      },
+    ],
+  },
+  {
+    id: 'peter-nicol-russell',
+    name: 'Peter Nicol Russell Building',
+    position: { top: '45%', left: '10%' },
+    dimensions: { width: '160px', height: '80px' },
+    className: 'transform skew-y-6',
+    floors: [
+      {
+        id: 'pnr-2',
+        name: 'Level 2',
+        mapImagePath: '/images/placeholder-floor.png',
+        pcs: generatePcs(60, 'PNR2'),
+      },
+    ],
+  },
+  {
+    id: 'brennan-maccallum',
+    name: 'Brennan MacCallum Building',
+    position: { top: '70%', left: '25%' },
+    dimensions: { width: '150px', height: '90px' },
+    className: 'rounded-full',
+    floors: [
+      {
+        id: 'bm-4',
+        name: 'Level 4',
+        mapImagePath: '/images/placeholder-floor.png',
+        pcs: generatePcs(30, 'BM4'),
+      },
+    ],
+  },
 ];
 
 export const allSoftware = availableSoftware;

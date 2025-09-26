@@ -37,7 +37,7 @@ const BuildingShape = ({ building, onSelect }: { building: Building; onSelect: (
 };
 
 export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProps) {
-  const mapImagePath = '/images/campusmap.png';
+  const mapImagePath = '/src/components/images/Screenshot 2025-09-26 at 5.47.34 pm.png';
 
   return (
     <Card className="overflow-hidden shadow-xl">
