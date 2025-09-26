@@ -1,10 +1,4 @@
-import data from './placeholder-images.json';
+import type { ImagePlaceholder } from './types';
+import { placeholderImages } from './placeholder-images-data';
 
-export type ImagePlaceholder = {
-  id: string;
-  description: string;
-  imageUrl: string;
-  imageHint: string;
-};
-
-export const PlaceHolderImages: ImagePlaceholder[] = data.placeholderImages;
+export const PlaceHolderImages: ImagePlaceholder[] = placeholderImages;
