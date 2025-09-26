@@ -23,6 +23,18 @@
       "description": "ScitechL1",
       "imageUrl": "/images/ScitechL1.jpg",
       "imageHint": "floor plan"
+    },
+    {
+      "id": "law-floor-1",
+      "description": "Floor 1 plan of Law Library.",
+      "imageUrl": "https://images.unsplash.com/photo-1721244653627-90b840127a7a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Zmxvb3IlMjBwbGFufGVufDB8fHx8MTc1ODgxNTI2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "floor plan"
+    },
+    {
+      "id": "law-floor-2",
+      "description": "Floor 2 plan of Law Library.",
+      "imageUrl": "https://images.unsplash.com/photo-1721244654210-a505a99661e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmbG9vciUyMHBsYW58ZW58MHx8fHwxNzU4ODE1MjYzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "floor plan"
     }
   ]
 }

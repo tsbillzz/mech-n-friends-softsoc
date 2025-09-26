@@ -88,6 +88,27 @@ export const buildings: Building[] = [
       },
     ],
   },
+  {
+    id: 'law',
+    name: 'Law Library',
+    position: { top: '15%', left: '65%' },
+    dimensions: { width: '130px', height: '90px' },
+    className: 'rounded-xl',
+    floors: [
+      {
+        id: 'l-1',
+        name: 'Level 1',
+        mapImageId: 'law-floor-1',
+        pcs: generatePcs(25, 'L1'),
+      },
+      {
+        id: 'l-2',
+        name: 'Level 2',
+        mapImageId: 'law-floor-2',
+        pcs: generatePcs(35, 'L2'),
+      },
+    ],
+  },
 ];
 
 export const allSoftware = availableSoftware;
