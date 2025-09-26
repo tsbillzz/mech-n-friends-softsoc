@@ -3,37 +3,37 @@
     {
       "id": "campus-map",
       "description": "A map of the University of Sydney campus.",
-      "imageUrl": "/images/campusmap.png",
+      "imageUrl": "https://drive.google.com/uc?id=YOUR_FILE_ID_FOR_campusmap.png",
       "imageHint": "campus map"
     },
     {
       "id": "fisher-floor-1",
       "description": "Floor 1 plan of Fisher Library.",
-      "imageUrl": "/images/fisher-floor-1.jpg",
+      "imageUrl": "https://drive.google.com/uc?id=YOUR_FILE_ID_FOR_fisher-floor-1.jpg",
       "imageHint": "floor plan"
     },
     {
       "id": "fisher-floor-2",
       "description": "Floor 2 plan of Fisher Library.",
-      "imageUrl": "/images/fisher-floor-2.jpg",
+      "imageUrl": "https://drive.google.com/uc?id=YOUR_FILE_ID_FOR_fisher-floor-2.jpg",
       "imageHint": "floor plan"
     },
     {
       "id": "scitech-floor-3",
       "description": "ScitechL1",
-      "imageUrl": "/images/ScitechL1.jpg",
+      "imageUrl": "https://drive.google.com/uc?id=YOUR_FILE_ID_FOR_ScitechL1.jpg",
       "imageHint": "floor plan"
     },
     {
       "id": "law-floor-1",
       "description": "Floor 1 plan of Law Library.",
-      "imageUrl": "/images/law-floor-1.jpg",
+      "imageUrl": "https://drive.google.com/uc?id=YOUR_FILE_ID_FOR_lawGF.png",
       "imageHint": "floor plan"
     },
     {
       "id": "law-floor-2",
       "description": "Floor 2 plan of Law Library.",
-      "imageUrl": "/images/law-floor-2.jpg",
+      "imageUrl": "https://drive.google.com/uc?id=YOUR_FILE_ID_FOR_law-floor-2.jpg",
       "imageHint": "floor plan"
     }
   ]
