@@ -1,15 +1,29 @@
 import Image from 'next/image';
-import type { Floor } from '@/lib/data';
+import type { PC } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import PCStatus from '../pc/pc-status';
 import { Card, CardContent } from '@/components/ui/card';
 
 type FloorPlanProps = {
-  floor: Floor;
+  originalPcs: PC[];
+  filteredPcs: PC[];
+  floorImageId: string;
+  isFiltered: boolean;
 };
 
-export default function FloorPlan({ floor }: FloorPlanProps) {
-  const floorImage = PlaceHolderImages.find((img) => img.id === floor.mapImageId);
+export default function FloorPlan({ originalPcs, filteredPcs, floorImageId, isFiltered }: FloorPlanProps) {
+  const floorImage = PlaceHolderImages.find((img) => img.id === floorImageId);
+
+  const filteredPcIds = new Set(filteredPcs.map(p => p.id));
+
+  const pcsToDisplay = isFiltered 
+    ? originalPcs.map(pc => ({
+        ...pc,
+        status: pc.status === 'occupied' 
+          ? 'occupied' 
+          : (filteredPcIds.has(pc.id) ? 'available' : 'filtered'),
+      }))
+    : originalPcs;
 
   return (
     <Card className="shadow-lg">
@@ -24,7 +38,7 @@ export default function FloorPlan({ floor }: FloorPlanProps) {
               data-ai-hint={floorImage.imageHint}
             />
           )}
-          {floor.pcs.map((pc) => (
+          {pcsToDisplay.map((pc) => (
             <PCStatus key={pc.id} pc={pc} />
           ))}
         </div>

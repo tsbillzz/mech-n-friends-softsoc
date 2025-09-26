@@ -9,7 +9,7 @@
     {
       "id": "fisher-floor-1",
       "description": "FisherL3",
-      "imageUrl": "/images/fisher-floor-1.jpg",
+      "imageUrl": "/images/FisherL3.jpg",
       "imageHint": "floor plan"
     },
     {
@@ -21,7 +21,7 @@
     {
       "id": "scitech-floor-3",
       "description": "ScitechL1",
-      "imageUrl": "/images/scitech-floor-3.jpg",
+      "imageUrl": "/images/ScitechL1.jpg",
       "imageHint": "floor plan"
     }
   ]

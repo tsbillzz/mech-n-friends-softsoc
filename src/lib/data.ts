@@ -2,6 +2,7 @@ export type PC = {
   id: string;
   status: 'available' | 'occupied';
   position: { top: string; left: string };
+  software: string[];
 };
 
 export type Floor = {
@@ -20,15 +21,35 @@ export type Building = {
   className?: string;
 };
 
+const availableSoftware = [
+  'Adobe Photoshop',
+  'AutoCAD',
+  'MATLAB',
+  'SPSS',
+  'Microsoft Office',
+  'Visual Studio Code',
+  'R Studio',
+  'Final Cut Pro',
+];
+
 const generatePcs = (count: number, prefix: string): PC[] => {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `${prefix}-PC-${i + 1}`,
-    status: Math.random() > 0.5 ? 'available' : 'occupied',
-    position: {
-      top: `${Math.floor(Math.random() * 80) + 10}%`,
-      left: `${Math.floor(Math.random() * 90) + 5}%`,
-    },
-  }));
+  return Array.from({ length: count }, (_, i) => {
+    // Assign a random subset of software to each PC
+    const software = availableSoftware.filter(() => Math.random() > 0.6);
+    if (software.length === 0) {
+      software.push('Microsoft Office'); // Ensure at least one software
+    }
+
+    return {
+      id: `${prefix}-PC-${i + 1}`,
+      status: Math.random() > 0.5 ? 'available' : 'occupied',
+      position: {
+        top: `${Math.floor(Math.random() * 80) + 10}%`,
+        left: `${Math.floor(Math.random() * 90) + 5}%`,
+      },
+      software: software,
+    };
+  });
 };
 
 export const buildings: Building[] = [
@@ -69,4 +90,5 @@ export const buildings: Building[] = [
   },
 ];
 
+export const allSoftware = availableSoftware;
 export type BuildingData = typeof buildings;

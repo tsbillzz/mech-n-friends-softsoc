@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { Building } from '@/lib/data';
+import { allSoftware } from '@/lib/data';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal } from 'lucide-react';
 import FloorPlan from './floor-plan';
 import AvailabilityForecaster from '../forecaster/availability-forecaster';
 
@@ -15,10 +19,12 @@ type BuildingViewProps = {
 
 export default function BuildingView({ building, onBack }: BuildingViewProps) {
   const [localBuilding, setLocalBuilding] = useState(building);
+  const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
   const defaultTab = building.floors[0]?.id;
 
   useEffect(() => {
     setLocalBuilding(building);
+    setSelectedSoftware([]);
 
     const intervalId = setInterval(() => {
       setLocalBuilding(currentBuilding => {
@@ -40,6 +46,28 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
     return () => clearInterval(intervalId);
   }, [building]);
 
+  const handleSoftwareChange = (software: string) => {
+    setSelectedSoftware(prev =>
+      prev.includes(software)
+        ? prev.filter(s => s !== software)
+        : [...prev, software]
+    );
+  };
+
+  const filteredBuilding = useMemo(() => {
+    if (selectedSoftware.length === 0) {
+      return localBuilding;
+    }
+    return {
+      ...localBuilding,
+      floors: localBuilding.floors.map(floor => ({
+        ...floor,
+        pcs: floor.pcs.filter(pc =>
+          pc.status === 'available' && selectedSoftware.every(s => pc.software.includes(s))
+        ),
+      })),
+    };
+  }, [localBuilding, selectedSoftware]);
 
   if (!defaultTab) {
     return (
@@ -69,6 +97,10 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
             <div className="w-4 h-4 rounded-full bg-rose-500" />
             <span className="text-sm">Occupied</span>
           </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded-full bg-gray-400" />
+            <span className="text-sm">Filtered Out</span>
+          </div>
         </div>
       </div>
       
@@ -82,14 +114,46 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
                   </TabsTrigger>
                 ))}
               </TabsList>
-              {localBuilding.floors.map((floor) => (
-                <TabsContent key={floor.id} value={floor.id}>
-                  <FloorPlan floor={floor} />
-                </TabsContent>
-              ))}
+              {localBuilding.floors.map((floor) => {
+                const originalFloor = localBuilding.floors.find(f => f.id === floor.id);
+                const filteredFloor = filteredBuilding.floors.find(f => f.id === floor.id);
+                return (
+                  <TabsContent key={floor.id} value={floor.id}>
+                    <FloorPlan 
+                      key={JSON.stringify(filteredFloor?.pcs)} 
+                      originalPcs={originalFloor?.pcs || []}
+                      filteredPcs={filteredFloor?.pcs || []}
+                      floorImageId={floor.mapImageId}
+                      isFiltered={selectedSoftware.length > 0}
+                    />
+                  </TabsContent>
+                )
+              })}
             </Tabs>
         </div>
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-8">
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl flex items-center gap-2">
+                <SlidersHorizontal />
+                Software Filter
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-4">
+              {allSoftware.map(software => (
+                <div key={software} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={software}
+                    checked={selectedSoftware.includes(software)}
+                    onCheckedChange={() => handleSoftwareChange(software)}
+                  />
+                  <Label htmlFor={software} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {software}
+                  </Label>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
           <AvailabilityForecaster buildingName={localBuilding.name} />
         </div>
       </div>

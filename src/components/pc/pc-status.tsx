@@ -7,11 +7,23 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+type PCWithFiltered = PC & { status: 'available' | 'occupied' | 'filtered' };
+
 type PCStatusProps = {
-  pc: PC;
+  pc: PCWithFiltered;
 };
 
+const statusClasses = {
+  available: 'bg-emerald-500',
+  occupied: 'bg-rose-500',
+  filtered: 'bg-gray-400',
+}
+
 export default function PCStatus({ pc }: PCStatusProps) {
+  const tooltipContent = pc.status === 'filtered' 
+    ? `${pc.id}: Does not match filter`
+    : `${pc.id}: ${pc.status}`;
+
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
@@ -19,13 +31,18 @@ export default function PCStatus({ pc }: PCStatusProps) {
           <div
             className={cn(
               'absolute w-4 h-4 rounded-sm border-2 border-white/50 shadow-md transition-all duration-300 transform hover:scale-125',
-              pc.status === 'available' ? 'bg-emerald-500' : 'bg-rose-500'
+              statusClasses[pc.status]
             )}
             style={{ top: pc.position.top, left: pc.position.left }}
           />
         </TooltipTrigger>
         <TooltipContent>
-          <p>{pc.id}: {pc.status}</p>
+          <p>{tooltipContent}</p>
+          {pc.software.length > 0 && (
+             <p className="text-xs text-muted-foreground">
+               Software: {pc.software.join(', ')}
+             </p>
+          )}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
