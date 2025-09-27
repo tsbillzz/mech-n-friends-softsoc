@@ -113,7 +113,7 @@ export default function Home() {
             <DialogHeader>
               <DialogTitle>Quiet Spots</DialogTitle>
             </DialogHeader>
-            <QuietSpots buildings={buildings} onSelectBuilding={onSelectBuilding} />
+            <QuietSpots buildings={buildings} onSelectBuilding={handleSelectBuilding} />
           </DialogContent>
         </Dialog>
       </div>
