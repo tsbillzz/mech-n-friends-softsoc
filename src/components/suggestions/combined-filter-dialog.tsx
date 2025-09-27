@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { SlidersHorizontal, LocateFixed, Users, Loader2 } from 'lucide-react';
+import { LocateFixed, Users, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type CombinedFilterDialogProps = {
@@ -18,6 +18,7 @@ type CombinedFilterDialogProps = {
   map: google.maps.Map | null;
   onDialogClose: () => void;
   onBuildingSelect: (buildingId: string) => void;
+  onBuildingHighlight: (buildingId: string) => void;
 };
 
 type BuildingWithDistance = Building & { distance: number };
@@ -33,7 +34,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   return R * 2 * Math.asin(Math.sqrt(a));
 };
 
-export default function CombinedFilterDialog({ buildings, map, onDialogClose, onBuildingSelect }: CombinedFilterDialogProps) {
+export default function CombinedFilterDialog({ buildings, map, onDialogClose, onBuildingSelect, onBuildingHighlight }: CombinedFilterDialogProps) {
   const [selectedBuilding, setSelectedBuilding] = useState<string>('');
   const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
   const [isGroupFinderEnabled, setIsGroupFinderEnabled] = useState(false);
@@ -51,7 +52,6 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
   const findIdealPC = () => {
     setIsFinding(true);
     if (selectedBuilding) {
-      // Logic if a building is pre-selected
       const building = buildings.find(b => b.id === selectedBuilding);
       if (building && hasMatchingPc(building)) {
         toast({
@@ -59,7 +59,9 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
           description: `An available spot matching your criteria was found in ${building.name}.`,
           duration: 3000,
         });
-        onBuildingSelect(building.id);
+        onBuildingHighlight(building.id);
+        map?.panTo({ lat: building.coordinates.latitude, lng: building.coordinates.longitude });
+        map?.setZoom(18);
         onDialogClose();
       } else {
         toast({
@@ -70,7 +72,6 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
       }
       setIsFinding(false);
     } else {
-      // Logic to find the nearest building if none is selected
       findNearest();
     }
   };
@@ -105,7 +106,6 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-
         const matchingBuildings = buildings.filter(b => hasMatchingPc(b));
 
         if (matchingBuildings.length === 0) {
@@ -130,7 +130,11 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
             description: `The closest available spot is in ${nearestBuilding.name}.`,
             duration: 3000,
         });
-        onBuildingSelect(nearestBuilding.id);
+        
+        onBuildingHighlight(nearestBuilding.id);
+        map?.panTo({ lat: nearestBuilding.coordinates.latitude, lng: nearestBuilding.coordinates.longitude });
+        map?.setZoom(18);
+
         onDialogClose();
         setIsFinding(false);
       },
@@ -145,17 +149,9 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
     );
   };
 
-
   return (
     <Card className="shadow-none border-none">
-      <CardHeader>
-        <CardTitle className="font-headline text-2xl flex items-center gap-2">
-          <SlidersHorizontal />
-          Find a PC
-        </CardTitle>
-        <CardDescription>Select your criteria and find the ideal spot.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 pt-6">
         <div>
             <Label className="font-semibold">Building (Optional)</Label>
             <Select onValueChange={setSelectedBuilding} value={selectedBuilding}>

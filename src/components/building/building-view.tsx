@@ -14,7 +14,7 @@ import AvailabilityForecaster from '../forecaster/availability-forecaster';
 import AdminLoginModal from './admin-login-modal';
 
 const floorImageMap: { [key: string]: string } = {
-  'f-3': '/images/fisher-floor-1.png',
+  'f-3': '/images/FisherL3.png',
   'f-3-2': '/images/fisher-floor-2.png',
   's-3': '/images/scitech-floor-3.png',
   'l-1': '/images/law-floor-1.png',

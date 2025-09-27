@@ -2,7 +2,7 @@
 'use client';
 
 import type { Dispatch, SetStateAction } from 'react';
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { Building } from '@/lib/data';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { Skeleton } from '../ui/skeleton';
@@ -11,9 +11,10 @@ type CampusMapProps = {
   buildings: Building[];
   onSelectBuilding: (buildingId: string) => void;
   mapRef: [google.maps.Map | null, Dispatch<SetStateAction<google.maps.Map | null>>];
+  selectedBuildingId: string | null;
 };
 
-export default function CampusMap({ buildings, onSelectBuilding, mapRef }: CampusMapProps) {
+export default function CampusMap({ buildings, onSelectBuilding, mapRef, selectedBuildingId }: CampusMapProps) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
@@ -21,39 +22,32 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
 
   const [map, setMap] = mapRef;
   const hasCenteredOnUser = useRef(false);
+  
+  const initialCenter = { lat: -33.88, lng: 151.19 };
 
-  useEffect(() => {
-    if (map && !hasCenteredOnUser.current && navigator.geolocation) {
+  const onLoad = useCallback((mapInstance: google.maps.Map) => {
+    setMap(mapInstance);
+    // Center on user's location once the map loads
+    if (navigator.geolocation && !hasCenteredOnUser.current) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           const userPosition = { lat: latitude, lng: longitude };
           
           if (!hasCenteredOnUser.current) {
-             map.panTo(userPosition);
-             map.setZoom(17);
+             mapInstance.panTo(userPosition);
+             mapInstance.setZoom(17);
              hasCenteredOnUser.current = true;
           }
         },
         (error) => {
           console.error("Error getting user's location", error);
+          // Fallback to initial center if location is denied
+          mapInstance.panTo(initialCenter);
         }
       );
     }
-  }, [map]);
-  
-  const initialCenter = useMemo(() => {
-    if (buildings.length === 0) {
-      return { lat: -33.88, lng: 151.19 };
-    }
-    const avgLat = buildings.reduce((sum, b) => sum + b.coordinates.latitude, 0) / buildings.length;
-    const avgLng = buildings.reduce((sum, b) => sum + b.coordinates.longitude, 0) / buildings.length;
-    return { lat: avgLat, lng: avgLng };
-  }, [buildings]);
-
-  const onLoad = useCallback((mapInstance: google.maps.Map) => {
-    setMap(mapInstance);
-  }, [setMap]);
+  }, [setMap, initialCenter]);
 
   const onUnmount = useCallback(() => {
     setMap(null);
@@ -71,13 +65,14 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
     return (
       <GoogleMap
         mapContainerStyle={{ width: '100%', height: '100%' }}
-        center={initialCenter}
-        zoom={16}
         onLoad={onLoad}
         onUnmount={onUnmount}
         options={{
           disableDefaultUI: true,
           zoomControl: true,
+          // Set initial center but don't bind it to state to allow free panning
+          center: initialCenter,
+          zoom: 16,
         }}
       >
         {buildings.map((building) => (
@@ -86,6 +81,11 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
             position={{ lat: building.coordinates.latitude, lng: building.coordinates.longitude }}
             onClick={() => onSelectBuilding(building.id)}
             title={building.name}
+            animation={
+              selectedBuildingId === building.id
+                ? google.maps.Animation.BOUNCE
+                : undefined
+            }
           />
         ))}
       </GoogleMap>

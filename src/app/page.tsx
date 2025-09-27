@@ -15,6 +15,7 @@ import Header from '@/components/layout/header';
 
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
+  const [highlightedBuildingId, setHighlightedBuildingId] = useState<string | null>(null);
   const [buildings, setBuildings] = useState<Building[]>(initialBuildings);
   const [isClient, setIsClient] = useState(false);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
@@ -52,6 +53,15 @@ export default function Home() {
 
     return () => clearInterval(intervalId);
   }, []);
+  
+  useEffect(() => {
+    if (highlightedBuildingId) {
+      const timer = setTimeout(() => {
+        setHighlightedBuildingId(null);
+      }, 3000); // Highlight for 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [highlightedBuildingId]);
 
   const handleSelectBuilding = (buildingId: string) => {
     const building = buildings.find(b => b.id === buildingId);
@@ -84,6 +94,7 @@ export default function Home() {
         buildings={buildings} 
         onSelectBuilding={handleSelectBuilding}
         mapRef={mapRef}
+        selectedBuildingId={highlightedBuildingId}
       />
       <div className="absolute top-20 right-4 flex flex-col gap-2">
         <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
@@ -93,7 +104,7 @@ export default function Home() {
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
+             <DialogHeader>
               <DialogTitle>Find a PC</DialogTitle>
             </DialogHeader>
              <CombinedFilterDialog 
@@ -101,6 +112,7 @@ export default function Home() {
                 map={mapRef[0]}
                 onDialogClose={() => setIsFilterDialogOpen(false)}
                 onBuildingSelect={handleSelectBuilding}
+                onBuildingHighlight={setHighlightedBuildingId}
              />
           </DialogContent>
         </Dialog>
