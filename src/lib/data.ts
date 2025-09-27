@@ -90,9 +90,8 @@ export const buildings: Building[] = [
     id: 'fisher',
     name: 'Fisher Library',
     position: { top: '30%', left: '40%' },
-    coordinates: { latitude: -33.8858, longitude: 151.1930 },
+    coordinates: { latitude: -33.88636, longitude: 151.19212 },
     dimensions: { width: '150px', height: '100px' },
-    className: 'transform -skew-x-12',
     floors: [
       {
         id: 'f-3',
@@ -110,7 +109,7 @@ export const buildings: Building[] = [
     id: 'scitech',
     name: 'SciTech Library',
     position: { top: '65%', left: '60%' },
-    coordinates: { latitude: -33.8863, longitude: 151.1898 },
+    coordinates: { latitude: -33.88789, longitude: 151.18916 },
     dimensions: { width: '120px', height: '80px' },
     floors: [
       {
@@ -124,7 +123,7 @@ export const buildings: Building[] = [
     id: 'law',
     name: 'Law Library',
     position: { top: '15%', left: '65%' },
-    coordinates: { latitude: -33.8845, longitude: 151.1963 },
+    coordinates: { latitude: -33.88451, longitude: 151.19634 },
     dimensions: { width: '130px', height: '90px' },
     floors: [
       {
@@ -143,7 +142,7 @@ export const buildings: Building[] = [
     id: 'belinda-hutchinson',
     name: 'Belinda Hutchinson Building',
     position: { top: '10%', left: '15%' },
-    coordinates: { latitude: -33.8878, longitude: 151.1895 },
+    coordinates: { latitude: -33.88764, longitude: 151.18873 },
     dimensions: { width: '180px', height: '70px' },
     floors: [
       {
@@ -157,9 +156,8 @@ export const buildings: Building[] = [
     id: 'peter-nicol-russell',
     name: 'Peter Nicol Russell Building',
     position: { top: '45%', left: '10%' },
-    coordinates: { latitude: -33.8871, longitude: 151.1913 },
+    coordinates: { latitude: -33.88708, longitude: 151.19131 },
     dimensions: { width: '160px', height: '80px' },
-    className: 'transform skew-y-6',
     floors: [
       {
         id: 'pnr-2',
@@ -172,7 +170,7 @@ export const buildings: Building[] = [
     id: 'brennan-maccallum',
     name: 'Brennan MacCallum Building',
     position: { top: '70%', left: '25%' },
-    coordinates: { latitude: -33.884, longitude: 151.188 },
+    coordinates: { latitude: -33.8837, longitude: 151.1881 },
     dimensions: { width: '150px', height: '90px' },
     floors: [
       {
