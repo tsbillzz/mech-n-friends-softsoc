@@ -2,7 +2,7 @@
 'use client';
 
 import type { Dispatch, SetStateAction } from 'react';
-import { useState, useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import type { Building } from '@/lib/data';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { Skeleton } from '../ui/skeleton';
@@ -14,6 +14,8 @@ type CampusMapProps = {
   selectedBuildingId: string | null;
 };
 
+const initialCenter = { lat: -33.88, lng: 151.19 };
+
 export default function CampusMap({ buildings, onSelectBuilding, mapRef, selectedBuildingId }: CampusMapProps) {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
@@ -22,12 +24,15 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef, selecte
 
   const [map, setMap] = mapRef;
   const hasCenteredOnUser = useRef(false);
-  
-  const initialCenter = { lat: -33.88, lng: 151.19 };
 
   const onLoad = useCallback((mapInstance: google.maps.Map) => {
     setMap(mapInstance);
-    // Center on user's location once the map loads
+
+    // Set initial view without binding it to state
+    mapInstance.setCenter(initialCenter);
+    mapInstance.setZoom(16);
+
+    // Center on user's location once the map loads, only if it hasn't been done.
     if (navigator.geolocation && !hasCenteredOnUser.current) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -42,12 +47,12 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef, selecte
         },
         (error) => {
           console.error("Error getting user's location", error);
-          // Fallback to initial center if location is denied
+          // Fallback to initial center if location is denied or fails
           mapInstance.panTo(initialCenter);
         }
       );
     }
-  }, [setMap, initialCenter]);
+  }, [setMap]);
 
   const onUnmount = useCallback(() => {
     setMap(null);
@@ -70,9 +75,6 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef, selecte
         options={{
           disableDefaultUI: true,
           zoomControl: true,
-          // Set initial center but don't bind it to state to allow free panning
-          center: initialCenter,
-          zoom: 16,
         }}
       >
         {buildings.map((building) => (
