@@ -89,6 +89,9 @@ export default function Home() {
             </Button>
           </DialogTrigger>
           <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Find a PC</DialogTitle>
+            </DialogHeader>
              <CombinedFilterDialog 
                 buildings={buildings}
                 map={mapRef[0]}
