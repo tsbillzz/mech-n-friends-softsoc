@@ -2,7 +2,7 @@
 'use client';
 
 import type { Dispatch, SetStateAction } from 'react';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { Building } from '@/lib/data';
 import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
 import { Skeleton } from '../ui/skeleton';
@@ -21,6 +21,7 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
 
   const [map, setMap] = mapRef;
   const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
+  const hasCenteredOnUser = useRef(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -31,10 +32,11 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
           
           setCurrentPosition(newPosition);
 
-          // Center map on the user's location the first time it's received
-          if (map && !currentPosition) {
+          // Center map on the user's location ONLY the first time it's received
+          if (map && !hasCenteredOnUser.current) {
              map.panTo(newPosition);
              map.setZoom(17);
+             hasCenteredOnUser.current = true; // Mark as centered
           }
         },
         (error) => {
@@ -48,7 +50,7 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
       );
       return () => navigator.geolocation.clearWatch(watchId);
     }
-  }, [map, currentPosition]);
+  }, [map]);
   
   const initialCenter = useMemo(() => {
     if (buildings.length === 0) {
