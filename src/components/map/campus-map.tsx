@@ -24,12 +24,12 @@ const BuildingShape = ({ building, onSelect }: { building: Building; onSelect: (
       <button
         onClick={onSelect}
         className={cn(
-          "w-full h-full bg-primary/20 border-2 border-primary/50 rounded-md transition-all duration-300 group-hover:bg-primary/40 group-hover:border-primary group-hover:scale-105",
+          "w-full h-full bg-primary/20 border-2 border-primary/50 rounded-xl transition-all duration-300 group-hover:bg-primary/40 group-hover:border-primary group-hover:scale-105",
           building.className
         )}
         title={`View ${building.name}`}
       />
-      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary-foreground font-bold text-center text-sm drop-shadow-md pointer-events-none group-hover:text-white">
+      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary-foreground font-bold text-center text-[8px] md:text-sm drop-shadow-md pointer-events-none group-hover:text-white">
         {building.name}
       </span>
     </div>
@@ -46,7 +46,7 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
       <CardContent>
         <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden border">
           <Image
-            src="/public/images/campusmap.png"
+            src="/images/campusmap.png"
             alt="Campus Map"
             fill
             className="object-cover"

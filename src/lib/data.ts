@@ -126,7 +126,6 @@ export const buildings: Building[] = [
     position: { top: '15%', left: '65%' },
     coordinates: { latitude: -33.884, longitude: 151.196 },
     dimensions: { width: '130px', height: '90px' },
-    className: 'rounded-xl',
     floors: [
       {
         id: 'l-1',
@@ -146,7 +145,6 @@ export const buildings: Building[] = [
     position: { top: '10%', left: '15%' },
     coordinates: { latitude: -33.888, longitude: 151.189 },
     dimensions: { width: '180px', height: '70px' },
-    className: 'rounded-lg',
     floors: [
       {
         id: 'bh-1',
@@ -176,7 +174,6 @@ export const buildings: Building[] = [
     position: { top: '70%', left: '25%' },
     coordinates: { latitude: -33.884, longitude: 151.188 },
     dimensions: { width: '150px', height: '90px' },
-    className: 'rounded-full',
     floors: [
       {
         id: 'bm-4',
