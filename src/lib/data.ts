@@ -39,12 +39,22 @@ const availableSoftware = [
   'Zoom',
 ];
 
-const generatePcs = (count: number, prefix: string): PC[] => {
+const generatePcs = (count: number, prefix: string, buildingId: string): PC[] => {
   const pcs: PC[] = [];
   let clusterCounter = 0;
 
   for (let i = 0; i < count; i++) {
-    const software = availableSoftware.filter((_, index) => (i + index) % 4 !== 0);
+    let software = availableSoftware.filter((_, index) => (i + index) % 4 !== 0);
+    
+    // Demo scenario logic
+    if (buildingId === 'peter-nicol-russell') {
+      software = software.filter(s => s !== 'NVivo');
+    } else if (buildingId === 'fisher' && i < 5) { // Ensure first 5 PCs in Fisher have NVivo
+      if (!software.includes('NVivo')) {
+        software.push('NVivo');
+      }
+    }
+
     if (software.length === 0) {
       software.push('Microsoft Office');
     }
@@ -96,12 +106,12 @@ export const buildings: Building[] = [
       {
         id: 'f-3',
         name: 'Floor 3',
-        pcs: generatePcs(30, 'F1'),
+        pcs: generatePcs(30, 'F1', 'fisher'),
       },
       {
         id: 'f-3-2',
         name: 'Floor 3',
-        pcs: generatePcs(40, 'F3'),
+        pcs: generatePcs(40, 'F3', 'fisher'),
       },
     ],
   },
@@ -115,7 +125,7 @@ export const buildings: Building[] = [
       {
         id: 's-3',
         name: 'Level 3',
-        pcs: generatePcs(50, 'S3'),
+        pcs: generatePcs(50, 'S3', 'scitech'),
       },
     ],
   },
@@ -129,12 +139,12 @@ export const buildings: Building[] = [
       {
         id: 'l-1',
         name: 'Level 1',
-        pcs: generatePcs(25, 'L1'),
+        pcs: generatePcs(25, 'L1', 'law'),
       },
       {
         id: 'l-2',
         name: 'Level 2',
-        pcs: generatePcs(35, 'L2'),
+        pcs: generatePcs(35, 'L2', 'law'),
       },
     ],
   },
@@ -148,7 +158,7 @@ export const buildings: Building[] = [
       {
         id: 'bh-1',
         name: 'Level 1',
-        pcs: generatePcs(45, 'BH1'),
+        pcs: generatePcs(45, 'BH1', 'belinda-hutchinson'),
       },
     ],
   },
@@ -162,7 +172,7 @@ export const buildings: Building[] = [
       {
         id: 'pnr-2',
         name: 'Level 2',
-        pcs: generatePcs(60, 'PNR2'),
+        pcs: generatePcs(60, 'PNR2', 'peter-nicol-russell'),
       },
     ],
   },
@@ -176,7 +186,7 @@ export const buildings: Building[] = [
       {
         id: 'bm-4',
         name: 'Level 4',
-        pcs: generatePcs(30, 'BM4'),
+        pcs: generatePcs(30, 'BM4', 'brennan-maccallum'),
       },
     ],
   },
