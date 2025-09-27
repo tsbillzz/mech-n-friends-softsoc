@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, SlidersHorizontal, Triangle, Wrench } from 'lucide-react';
+import { ArrowLeft, SlidersHorizontal, Triangle, Wrench, Users } from 'lucide-react';
 import FloorPlan from './floor-plan';
 import AvailabilityForecaster from '../forecaster/availability-forecaster';
 import AdminLoginModal from './admin-login-modal';
@@ -172,6 +172,10 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
           <div className="flex items-center gap-2">
             <Wrench className="w-4 h-4 text-blue-500" />
             <span className="text-sm">Maintenance</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4 text-purple-500" />
+            <span className="text-sm">Group Area</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded-full bg-gray-400" />

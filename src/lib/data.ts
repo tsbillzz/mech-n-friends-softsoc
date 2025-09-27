@@ -3,6 +3,7 @@ export type PC = {
   status: 'available' | 'occupied' | 'broken' | 'under maintenance';
   position: { top: string; left: string };
   software: string[];
+  clusterId?: number;
 };
 
 export type Floor = {
@@ -38,16 +39,17 @@ const availableSoftware = [
 ];
 
 const generatePcs = (count: number, prefix: string): PC[] => {
-  return Array.from({ length: count }, (_, i) => {
-    // Assign a random subset of software to each PC
+  const pcs: PC[] = [];
+  let clusterCounter = 0;
+
+  for (let i = 0; i < count; i++) {
     const software = availableSoftware.filter(() => Math.random() > 0.6);
     if (software.length === 0) {
-      software.push('Microsoft Office'); // Ensure at least one software
+      software.push('Microsoft Office');
     }
 
     const randomStatus = Math.random();
-
-    return {
+    const pc: PC = {
       id: `${prefix}-PC-${i + 1}`,
       status: randomStatus > 0.5 ? 'available' : 'occupied',
       position: {
@@ -56,7 +58,28 @@ const generatePcs = (count: number, prefix: string): PC[] => {
       },
       software: software,
     };
-  });
+
+    // Create some clusters
+    if (i % 7 === 0 && i + 2 < count) {
+      clusterCounter++;
+      const clusterSize = Math.floor(Math.random() * 3) + 2; // 2 to 4 PCs
+      for (let j = 0; j < clusterSize && i + j < count; j++) {
+        pcs.push({
+          ...pc,
+          id: `${prefix}-PC-${i + 1 + j}`,
+          clusterId: clusterCounter,
+          position: {
+            top: `${parseInt(pc.position.top) + j * 2}%`,
+            left: `${parseInt(pc.position.left) + j * 4}%`,
+          },
+        });
+      }
+      i += clusterSize - 1;
+    } else {
+      pcs.push(pc);
+    }
+  }
+  return pcs;
 };
 
 export const buildings: Building[] = [

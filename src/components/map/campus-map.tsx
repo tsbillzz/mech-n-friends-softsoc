@@ -46,7 +46,7 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
       <CardContent>
         <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden border">
           <Image
-            src="/images/campusmap.png"
+            src="/public/images/campusmap.png"
             alt="Campus Map"
             fill
             className="object-cover"
