@@ -120,18 +120,27 @@ export default function CampusMap({ buildings, onSelectBuilding, selectedSoftwar
     });
     
     setTimeout(() => {
-      const directionsService = new google.maps.DirectionsService();
+      if (!window.google || !window.google.maps) {
+        console.error("Google Maps API not loaded.");
+        return;
+      }
+      const directionsService = new window.google.maps.DirectionsService();
       directionsService.route(
         {
-          origin: new google.maps.LatLng(currentPosition.lat, currentPosition.lng),
-          destination: new google.maps.LatLng(nearestBuilding.coordinates.latitude, nearestBuilding.coordinates.longitude),
-          travelMode: google.maps.TravelMode.WALKING,
+          origin: new window.google.maps.LatLng(currentPosition.lat, currentPosition.lng),
+          destination: new window.google.maps.LatLng(nearestBuilding.coordinates.latitude, nearestBuilding.coordinates.longitude),
+          travelMode: window.google.maps.TravelMode.WALKING,
         },
         (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK) {
+          if (status === window.google.maps.DirectionsStatus.OK) {
             setDirections(result);
           } else {
             console.error(`error fetching directions ${result}`);
+            toast({
+              variant: "destructive",
+              title: "Directions Error",
+              description: `Could not fetch directions: ${status}`,
+            });
           }
         }
       );
