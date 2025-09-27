@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Button } from '../ui/button';
-import { AlertTriangle, Triangle, Wrench } from 'lucide-react';
+import { Triangle, Wrench } from 'lucide-react';
 
 type PCWithFiltered = PC & { status: 'available' | 'occupied' | 'filtered' | 'broken' | 'under maintenance' };
 
@@ -68,7 +68,7 @@ export default function PCStatus({ pc, onToggleBrokenStatus, onToggleMaintenance
                 onToggleBrokenStatus(pc.id);
               }}
             >
-              <AlertTriangle className="mr-2" />
+              <Triangle className="mr-2" />
               {isBroken ? 'Mark as Fixed' : 'Flag as Broken'}
             </Button>
             <Button

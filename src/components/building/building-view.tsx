@@ -13,6 +13,18 @@ import FloorPlan from './floor-plan';
 import AvailabilityForecaster from '../forecaster/availability-forecaster';
 import AdminLoginModal from './admin-login-modal';
 
+const floorImageMap: { [key: string]: string } = {
+  'f-3': '/images/fisher-floor-1.png',
+  'f-3-2': '/images/fisher-floor-2.png',
+  's-3': '/images/scitech-floor-3.png',
+  'l-1': '/images/law-floor-1.png',
+  'l-2': '/images/law-floor-2.png',
+  'bh-1': '/images/placeholder-floor.png',
+  'pnr-2': '/images/placeholder-floor.png',
+  'bm-4': '/images/placeholder-floor.png',
+};
+
+
 type BuildingViewProps = {
   building: Building;
   onBack: () => void;
@@ -181,6 +193,7 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
               {localBuilding.floors.map((floor) => {
                 const originalFloor = localBuilding.floors.find(f => f.id === floor.id);
                 const filteredFloor = filteredBuilding.floors.find(f => f.id === floor.id);
+                const mapImage = floorImageMap[floor.id] || '/images/placeholder-floor.png';
                 return (
                   <TabsContent key={floor.id} value={floor.id}>
                     <FloorPlan 
@@ -190,7 +203,7 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
                       isFiltered={selectedSoftware.length > 0}
                       onToggleBrokenStatus={handleToggleBrokenStatus}
                       onToggleMaintenanceStatus={handleOpenMaintenanceModal}
-                      mapImagePath={floor.mapImagePath}
+                      mapImage={mapImage}
                     />
                   </TabsContent>
                 )

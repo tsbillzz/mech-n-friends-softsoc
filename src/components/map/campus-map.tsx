@@ -51,6 +51,7 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
             fill
             className="object-cover"
             priority
+            sizes="100vw"
           />
           {buildings.map((building) => (
             <BuildingShape

@@ -9,10 +9,10 @@ type FloorPlanProps = {
   isFiltered: boolean;
   onToggleBrokenStatus: (pcId: string) => void;
   onToggleMaintenanceStatus: (pcId: string) => void;
-  mapImagePath: string;
+  mapImage: string;
 };
 
-export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onToggleBrokenStatus, onToggleMaintenanceStatus, mapImagePath }: FloorPlanProps) {
+export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onToggleBrokenStatus, onToggleMaintenanceStatus, mapImage }: FloorPlanProps) {
   const filteredPcIds = new Set(filteredPcs.map(p => p.id));
 
   const pcsToDisplay = isFiltered 
@@ -33,10 +33,11 @@ export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onTogg
       <CardContent className="p-4">
         <div className="relative w-full aspect-[5/3] rounded-md overflow-hidden bg-muted">
           <Image 
-            src={mapImagePath} 
+            src={mapImage} 
             alt="Floor plan" 
             fill
             className="object-contain"
+            sizes="100vw"
           />
           {pcsToDisplay.map((pc) => (
             <PCStatus 
