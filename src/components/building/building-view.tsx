@@ -7,23 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, SlidersHorizontal, Triangle, Wrench, Users } from 'lucide-react';
-import FloorPlan from './floor-plan';
 import AvailabilityForecaster from '../forecaster/availability-forecaster';
 import AdminLoginModal from './admin-login-modal';
-
-const floorImageMap: { [key: string]: string } = {
-  'f-3': '/images/FisherL3.jpg',
-  'f-3-2': '/images/fisher-floor-2.png',
-  's-3': '/images/scitech-floor-3.png',
-  'l-1': '/images/law-floor-1.png',
-  'l-2': '/images/law-floor-2.png',
-  'bh-1': '/images/placeholder-floor.png',
-  'pnr-2': '/images/placeholder-floor.png',
-  'bm-4': '/images/placeholder-floor.png',
-};
-
+import PCStatus from '../pc/pc-status';
 
 type BuildingViewProps = {
   building: Building;
@@ -35,7 +22,8 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
   const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [selectedPc, setSelectedPc] = useState<PC | null>(null);
-  const defaultTab = building.floors[0]?.id;
+  
+  const allPcs = useMemo(() => localBuilding.floors.flatMap(f => f.pcs), [localBuilding]);
 
   useEffect(() => {
     setLocalBuilding(building);
@@ -45,6 +33,8 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
       setLocalBuilding(currentBuilding => {
         const newBuildingData = JSON.parse(JSON.stringify(currentBuilding));
         
+        if (newBuildingData.floors.length === 0) return newBuildingData;
+
         const randomFloorIndex = Math.floor(Math.random() * newBuildingData.floors.length);
         const floor = newBuildingData.floors[randomFloorIndex];
 
@@ -91,13 +81,10 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
   };
   
   const handleOpenMaintenanceModal = (pcId: string) => {
-    for (const floor of localBuilding.floors) {
-      const pc = floor.pcs.find(p => p.id === pcId);
-      if (pc) {
-        setSelectedPc(pc);
-        setIsLoginModalOpen(true);
-        break;
-      }
+    const pc = allPcs.find(p => p.id === pcId);
+    if (pc) {
+      setSelectedPc(pc);
+      setIsLoginModalOpen(true);
     }
   };
 
@@ -119,29 +106,40 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
     setSelectedPc(null);
   };
 
-  const filteredBuilding = useMemo(() => {
+  const filteredPcs = useMemo(() => {
     if (selectedSoftware.length === 0) {
-      return localBuilding;
+      return allPcs;
     }
-    return {
-      ...localBuilding,
-      floors: localBuilding.floors.map(floor => ({
-        ...floor,
-        pcs: floor.pcs.filter(pc =>
-          pc.status !== 'broken' && 
-          pc.status !== 'under maintenance' &&
-          pc.status === 'available' && 
-          selectedSoftware.every(s => pc.software.includes(s))
-        ),
-      })),
-    };
-  }, [localBuilding, selectedSoftware]);
+    return allPcs.filter(pc =>
+      pc.status !== 'broken' && 
+      pc.status !== 'under maintenance' &&
+      pc.status === 'available' && 
+      selectedSoftware.every(s => pc.software.includes(s))
+    );
+  }, [allPcs, selectedSoftware]);
+  
+  const isFiltered = selectedSoftware.length > 0;
+  const filteredPcIds = new Set(filteredPcs.map(p => p.id));
 
-  if (!defaultTab) {
+  const pcsToDisplay = isFiltered 
+  ? allPcs.map(pc => ({
+      ...pc,
+      status: pc.status === 'broken'
+        ? 'broken'
+        : pc.status === 'under maintenance'
+        ? 'under maintenance'
+        : pc.status === 'occupied' 
+        ? 'occupied' 
+        : (filteredPcIds.has(pc.id) ? 'available' : 'filtered'),
+    }))
+  : allPcs;
+
+
+  if (localBuilding.floors.length === 0) {
     return (
       <div>
         <Button onClick={onBack} variant="ghost"><ArrowLeft className="mr-2" /> Back to Map</Button>
-        <p className="mt-4">This building has no floor plans available.</p>
+        <p className="mt-4">This building has no PC data available.</p>
       </div>
     );
   }
@@ -186,33 +184,20 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2">
-            <Tabs defaultValue={defaultTab} className="w-full">
-              <TabsList>
-                {localBuilding.floors.map((floor) => (
-                  <TabsTrigger key={floor.id} value={floor.id}>
-                    {floor.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              {localBuilding.floors.map((floor) => {
-                const originalFloor = localBuilding.floors.find(f => f.id === floor.id);
-                const filteredFloor = filteredBuilding.floors.find(f => f.id === floor.id);
-                const mapImage = floorImageMap[floor.id] || '/images/placeholder-floor.png';
-                return (
-                  <TabsContent key={floor.id} value={floor.id}>
-                    <FloorPlan 
-                      key={JSON.stringify(filteredFloor?.pcs)} 
-                      originalPcs={originalFloor?.pcs || []}
-                      filteredPcs={filteredFloor?.pcs || []}
-                      isFiltered={selectedSoftware.length > 0}
-                      onToggleBrokenStatus={handleToggleBrokenStatus}
-                      onToggleMaintenanceStatus={handleOpenMaintenanceModal}
-                      mapImage={mapImage}
+           <Card className="shadow-lg">
+            <CardContent className="p-4">
+                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-4 max-h-[60vh] overflow-y-auto">
+                {pcsToDisplay.map((pc) => (
+                    <PCStatus 
+                        key={pc.id} 
+                        pc={pc}
+                        onToggleBrokenStatus={handleToggleBrokenStatus}
+                        onToggleMaintenanceStatus={handleOpenMaintenanceModal}
                     />
-                  </TabsContent>
-                )
-              })}
-            </Tabs>
+                ))}
+                </div>
+            </CardContent>
+           </Card>
         </div>
         <div className="lg:col-span-1 space-y-8">
           <Card className="shadow-lg">
