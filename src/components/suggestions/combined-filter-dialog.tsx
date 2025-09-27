@@ -35,7 +35,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 };
 
 export default function CombinedFilterDialog({ buildings, map, onDialogClose, onBuildingSelect, onBuildingHighlight }: CombinedFilterDialogProps) {
-  const [selectedBuilding, setSelectedBuilding] = useState<string>('');
+  const [selectedBuilding, setSelectedBuilding] = useState<string>('any');
   const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
   const [isGroupFinderEnabled, setIsGroupFinderEnabled] = useState(false);
   const [isFinding, setIsFinding] = useState(false);
@@ -51,7 +51,7 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
 
   const findIdealPC = () => {
     setIsFinding(true);
-    if (selectedBuilding) {
+    if (selectedBuilding && selectedBuilding !== 'any') {
       const building = buildings.find(b => b.id === selectedBuilding);
       if (building && hasMatchingPc(building)) {
         toast({
@@ -159,7 +159,7 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose, on
                 <SelectValue placeholder="Any building (find nearest)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any building (find nearest)</SelectItem>
+                <SelectItem value="any">Any building (find nearest)</SelectItem>
                 {buildings.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
               </SelectContent>
             </Select>
