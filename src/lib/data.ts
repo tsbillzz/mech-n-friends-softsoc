@@ -170,7 +170,7 @@ export const buildings: Building[] = [
     id: 'brennan-maccallum',
     name: 'Brennan MacCallum Building',
     position: { top: '70%', left: '25%' },
-    coordinates: { latitude: -33.8837, longitude: 151.1881 },
+    coordinates: { latitude: -33.88613059119759, longitude: 151.1874510352814 },
     dimensions: { width: '150px', height: '90px' },
     floors: [
       {

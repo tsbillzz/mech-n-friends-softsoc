@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { Building } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
@@ -22,6 +23,7 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
   });
 
+  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
@@ -53,6 +55,15 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
     return { lat: avgLat, lng: avgLng };
   }, [buildings]);
 
+  const onLoad = useCallback((mapInstance: google.maps.Map) => {
+    mapInstance.setCenter(initialCenter);
+    setMap(mapInstance);
+  }, [initialCenter]);
+
+  const onUnmount = useCallback(() => {
+    setMap(null);
+  }, []);
+
   const renderMap = () => {
     if (loadError) {
       return <div className='flex items-center justify-center h-full'>Error loading map</div>;
@@ -65,8 +76,9 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
     return (
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={initialCenter}
         zoom={16}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
       >
         {buildings.map((building) => (
           <Marker
