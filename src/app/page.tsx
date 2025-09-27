@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,16 +8,17 @@ import BuildingView from '@/components/building/building-view';
 import CampusMap from '@/components/map/campus-map';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { SlidersHorizontal, Users, PersonStanding, LocateFixed } from 'lucide-react';
-import SoftwareFilter from '@/components/suggestions/software-filter';
+import { SlidersHorizontal, PersonStanding } from 'lucide-react';
 import QuietSpots from '@/components/suggestions/quiet-spots';
-import GroupStudyFinder from '@/components/suggestions/group-study-finder';
+import CombinedFilterDialog from '@/components/suggestions/combined-filter-dialog';
 
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [buildings, setBuildings] = useState<Building[]>(initialBuildings);
-  const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  
+  const mapRef = useState<google.maps.Map | null>(null);
 
   useEffect(() => {
     setIsClient(true);
@@ -53,18 +55,11 @@ export default function Home() {
   const handleSelectBuilding = (buildingId: string) => {
     const building = buildings.find(b => b.id === buildingId);
     setSelectedBuilding(building || null);
+    setIsFilterDialogOpen(false); // Close dialog when a building is selected
   };
 
   const handleBackToMap = () => {
     setSelectedBuilding(null);
-  };
-
-  const handleSoftwareChange = (software: string) => {
-    setSelectedSoftware(prev =>
-      prev.includes(software)
-        ? prev.filter(s => s !== software)
-        : [...prev, software]
-    );
   };
 
   if (!isClient) {
@@ -84,23 +79,21 @@ export default function Home() {
       <CampusMap 
         buildings={buildings} 
         onSelectBuilding={handleSelectBuilding}
-        selectedSoftware={selectedSoftware}
+        mapRef={mapRef}
       />
       <div className="absolute top-4 right-4 flex flex-col gap-2">
-        <Dialog>
+        <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
           <DialogTrigger asChild>
             <Button size="icon" className="rounded-full h-12 w-12 shadow-lg">
               <SlidersHorizontal />
             </Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Filters & Study Spaces</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <SoftwareFilter selectedSoftware={selectedSoftware} onSoftwareChange={handleSoftwareChange} />
-              <GroupStudyFinder buildings={buildings} onSelectBuilding={handleSelectBuilding} />
-            </div>
+             <CombinedFilterDialog 
+                buildings={buildings}
+                map={mapRef[0]}
+                onDialogClose={() => setIsFilterDialogOpen(false)}
+             />
           </DialogContent>
         </Dialog>
         <Dialog>

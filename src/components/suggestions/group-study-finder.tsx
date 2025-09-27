@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Building, PC } from '@/lib/data';
