@@ -16,6 +16,7 @@ export type Building = {
   id: string;
   name: string;
   position: { top: string; left: string };
+  coordinates: { latitude: number; longitude: number };
   floors: Floor[];
   dimensions?: { width: string; height: string };
   className?: string;
@@ -89,6 +90,7 @@ export const buildings: Building[] = [
     id: 'fisher',
     name: 'Fisher Library',
     position: { top: '30%', left: '40%' },
+    coordinates: { latitude: -33.885, longitude: 151.194 },
     dimensions: { width: '150px', height: '100px' },
     className: 'transform -skew-x-12',
     floors: [
@@ -108,6 +110,7 @@ export const buildings: Building[] = [
     id: 'scitech',
     name: 'SciTech Library',
     position: { top: '65%', left: '60%' },
+    coordinates: { latitude: -33.886, longitude: 151.190 },
     dimensions: { width: '120px', height: '80px' },
     floors: [
       {
@@ -121,6 +124,7 @@ export const buildings: Building[] = [
     id: 'law',
     name: 'Law Library',
     position: { top: '15%', left: '65%' },
+    coordinates: { latitude: -33.884, longitude: 151.196 },
     dimensions: { width: '130px', height: '90px' },
     className: 'rounded-xl',
     floors: [
@@ -140,6 +144,7 @@ export const buildings: Building[] = [
     id: 'belinda-hutchinson',
     name: 'Belinda Hutchinson Building',
     position: { top: '10%', left: '15%' },
+    coordinates: { latitude: -33.888, longitude: 151.189 },
     dimensions: { width: '180px', height: '70px' },
     className: 'rounded-lg',
     floors: [
@@ -154,6 +159,7 @@ export const buildings: Building[] = [
     id: 'peter-nicol-russell',
     name: 'Peter Nicol Russell Building',
     position: { top: '45%', left: '10%' },
+    coordinates: { latitude: -33.887, longitude: 151.191 },
     dimensions: { width: '160px', height: '80px' },
     className: 'transform skew-y-6',
     floors: [
@@ -168,6 +174,7 @@ export const buildings: Building[] = [
     id: 'brennan-maccallum',
     name: 'Brennan MacCallum Building',
     position: { top: '70%', left: '25%' },
+    coordinates: { latitude: -33.884, longitude: 151.188 },
     dimensions: { width: '150px', height: '90px' },
     className: 'rounded-full',
     floors: [

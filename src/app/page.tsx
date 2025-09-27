@@ -7,6 +7,7 @@ import Header from '@/components/layout/header';
 import CampusMap from '@/components/map/campus-map';
 import BuildingView from '@/components/building/building-view';
 import QuietSpots from '@/components/suggestions/quiet-spots';
+import NearestPcFinder from '@/components/suggestions/nearest-pc-finder';
 
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
@@ -64,7 +65,8 @@ export default function Home() {
               <div className="lg:col-span-2">
                 <CampusMap buildings={buildings} onSelectBuilding={handleSelectBuilding} />
               </div>
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 space-y-8">
+                <NearestPcFinder buildings={buildings} onSelectBuilding={handleSelectBuilding} />
                 <QuietSpots buildings={buildings} onSelectBuilding={handleSelectBuilding}/>
               </div>
             </div>
