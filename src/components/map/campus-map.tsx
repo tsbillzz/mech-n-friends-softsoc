@@ -1,6 +1,7 @@
 'use client';
 
 import type { Building } from '@/lib/data';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -43,7 +44,14 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
         <CardTitle className="font-headline text-3xl">Campus Overview</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden border bg-muted">
+        <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden border">
+          <Image
+            src="/images/campusmap.png"
+            alt="Campus Map"
+            fill
+            className="object-cover"
+            priority
+          />
           {buildings.map((building) => (
             <BuildingShape
               key={building.id}

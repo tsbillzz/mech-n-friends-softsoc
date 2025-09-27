@@ -190,6 +190,7 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
                       isFiltered={selectedSoftware.length > 0}
                       onToggleBrokenStatus={handleToggleBrokenStatus}
                       onToggleMaintenanceStatus={handleOpenMaintenanceModal}
+                      mapImagePath={floor.mapImagePath}
                     />
                   </TabsContent>
                 )

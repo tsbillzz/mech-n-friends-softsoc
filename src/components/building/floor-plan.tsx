@@ -1,4 +1,5 @@
 import type { PC } from '@/lib/data';
+import Image from 'next/image';
 import PCStatus from '../pc/pc-status';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -8,9 +9,10 @@ type FloorPlanProps = {
   isFiltered: boolean;
   onToggleBrokenStatus: (pcId: string) => void;
   onToggleMaintenanceStatus: (pcId: string) => void;
+  mapImagePath: string;
 };
 
-export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onToggleBrokenStatus, onToggleMaintenanceStatus }: FloorPlanProps) {
+export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onToggleBrokenStatus, onToggleMaintenanceStatus, mapImagePath }: FloorPlanProps) {
   const filteredPcIds = new Set(filteredPcs.map(p => p.id));
 
   const pcsToDisplay = isFiltered 
@@ -30,6 +32,12 @@ export default function FloorPlan({ originalPcs, filteredPcs, isFiltered, onTogg
     <Card className="shadow-lg">
       <CardContent className="p-4">
         <div className="relative w-full aspect-[5/3] rounded-md overflow-hidden bg-muted">
+          <Image 
+            src={mapImagePath} 
+            alt="Floor plan" 
+            fill
+            className="object-contain"
+          />
           {pcsToDisplay.map((pc) => (
             <PCStatus 
               key={pc.id} 
