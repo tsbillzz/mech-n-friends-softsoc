@@ -65,7 +65,6 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
                 description: `The closest available spot is in ${nearestBuilding.name}.`,
                 duration: 3000,
             });
-            drawDirections(currentPosition, nearestBuilding);
         } else {
             toast({
                 variant: "destructive",
@@ -131,43 +130,6 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
       }));
 
       return buildingsWithDistance.sort((a, b) => a.distance - b.distance)[0];
-  };
-
-
-  const drawDirections = (origin: { lat: number; lng: number }, destinationBuilding: Building) => {
-    if (!map || !window.google || !window.google.maps) {
-      console.error("Google Maps API not loaded or map not ready.");
-      return;
-    }
-    const directionsService = new window.google.maps.DirectionsService();
-    directionsService.route(
-      {
-        origin: new window.google.maps.LatLng(origin.lat, origin.lng),
-        destination: new window.google.maps.LatLng(destinationBuilding.coordinates.latitude, destinationBuilding.coordinates.longitude),
-        travelMode: window.google.maps.TravelMode.WALKING,
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK && result) {
-            const directionsRenderer = new window.google.maps.DirectionsRenderer({
-                directions: result,
-                suppressMarkers: true,
-                polylineOptions: {
-                  strokeColor: '#FF0000',
-                  strokeOpacity: 0.8,
-                  strokeWeight: 6,
-                },
-              });
-            directionsRenderer.setMap(map);
-        } else {
-          console.error(`error fetching directions ${result}`);
-          toast({
-            variant: "destructive",
-            title: "Directions Error",
-            description: `Could not fetch directions: ${status}`,
-          });
-        }
-      }
-    );
   };
 
 

@@ -4,7 +4,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { Building } from '@/lib/data';
-import { GoogleMap, useJsApiLoader, Marker, Circle, DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
 import { Skeleton } from '../ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 
@@ -22,7 +22,6 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
 
   const [map, setMap] = mapRef;
   const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
-  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -100,19 +99,6 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
               strokeWeight: 2,
               fillColor: '#4285F4',
               fillOpacity: 0.5,
-            }}
-          />
-        )}
-        {directions && (
-          <DirectionsRenderer
-            options={{
-              directions: directions,
-              suppressMarkers: true,
-              polylineOptions: {
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 6,
-              },
             }}
           />
         )}
