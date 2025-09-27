@@ -90,7 +90,7 @@ export const buildings: Building[] = [
     id: 'fisher',
     name: 'Fisher Library',
     position: { top: '30%', left: '40%' },
-    coordinates: { latitude: -33.88636, longitude: 151.19212 },
+    coordinates: { latitude: -33.88603967874559, longitude: 151.1904816016537 },
     dimensions: { width: '150px', height: '100px' },
     floors: [
       {
@@ -123,7 +123,7 @@ export const buildings: Building[] = [
     id: 'law',
     name: 'Law Library',
     position: { top: '15%', left: '65%' },
-    coordinates: { latitude: -33.88451, longitude: 151.19634 },
+    coordinates: { latitude: -33.887180778490865, longitude: 151.190655448979 },
     dimensions: { width: '130px', height: '90px' },
     floors: [
       {
@@ -142,7 +142,7 @@ export const buildings: Building[] = [
     id: 'belinda-hutchinson',
     name: 'Belinda Hutchinson Building',
     position: { top: '10%', left: '15%' },
-    coordinates: { latitude: -33.88764, longitude: 151.18873 },
+    coordinates: { latitude: -33.8917522518913, longitude: 151.19109179689855 },
     dimensions: { width: '180px', height: '70px' },
     floors: [
       {
@@ -156,7 +156,7 @@ export const buildings: Building[] = [
     id: 'peter-nicol-russell',
     name: 'Peter Nicol Russell Building',
     position: { top: '45%', left: '10%' },
-    coordinates: { latitude: -33.88708, longitude: 151.19131 },
+    coordinates: { latitude: -33.88996802919181, longitude: 151.19311644404635 },
     dimensions: { width: '160px', height: '80px' },
     floors: [
       {
