@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { SlidersHorizontal, LocateFixed, Users } from 'lucide-react';
+import { SlidersHorizontal, LocateFixed, Users, Loader2 } from 'lucide-react';
 
 type CombinedFilterDialogProps = {
   buildings: Building[];
@@ -34,6 +34,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
 export default function CombinedFilterDialog({ buildings, map, onDialogClose }: CombinedFilterDialogProps) {
   const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
   const [isGroupFinderEnabled, setIsGroupFinderEnabled] = useState(false);
+  const [isFinding, setIsFinding] = useState(false);
   const { toast } = useToast();
 
   const handleSoftwareChange = (software: string) => {
@@ -45,6 +46,7 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
   };
 
   const findNearest = () => {
+    setIsFinding(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -72,6 +74,7 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
                 description: "No available computers found matching your criteria.",
             });
         }
+        setIsFinding(false);
       },
       () => {
         toast({
@@ -79,6 +82,7 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
           title: "Location not available",
           description: "Could not determine your current location. Please enable location services.",
         });
+        setIsFinding(false);
       }
     );
   };
@@ -175,8 +179,13 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={findNearest} className="w-full">
-            <LocateFixed className="mr-2" /> Find Nearest PC
+        <Button onClick={findNearest} className="w-full" disabled={isFinding}>
+            {isFinding ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <LocateFixed className="mr-2" />
+            )}
+            {isFinding ? 'Finding...' : 'Find Nearest PC'}
         </Button>
       </CardFooter>
     </Card>
