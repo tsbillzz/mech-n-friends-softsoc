@@ -6,8 +6,7 @@ import { buildings as initialBuildings } from '@/lib/data';
 import Header from '@/components/layout/header';
 import CampusMap from '@/components/map/campus-map';
 import BuildingView from '@/components/building/building-view';
-import QuietSpots from '@/components/suggestions/quiet-spots';
-import NearestPcFinder from '@/components/suggestions/nearest-pc-finder';
+import SuggestionWidgets from '@/components/suggestions/suggestion-widgets';
 
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
@@ -61,13 +60,12 @@ export default function Home() {
           {selectedBuilding ? (
             <BuildingView building={selectedBuilding} onBack={handleBackToMap} />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-              <div className="lg:col-span-2">
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
+              <div className="w-full lg:w-2/3">
                 <CampusMap buildings={buildings} onSelectBuilding={handleSelectBuilding} />
               </div>
-              <div className="lg:col-span-1 space-y-8">
-                <NearestPcFinder buildings={buildings} onSelectBuilding={handleSelectBuilding} />
-                <QuietSpots buildings={buildings} onSelectBuilding={handleSelectBuilding}/>
+              <div className="w-full lg:w-1/3">
+                <SuggestionWidgets buildings={buildings} onSelectBuilding={handleSelectBuilding} />
               </div>
             </div>
           )}
