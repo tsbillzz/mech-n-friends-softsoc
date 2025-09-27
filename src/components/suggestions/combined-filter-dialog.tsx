@@ -11,11 +11,13 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { SlidersHorizontal, LocateFixed, Users, Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 type CombinedFilterDialogProps = {
   buildings: Building[];
   map: google.maps.Map | null;
   onDialogClose: () => void;
+  onBuildingSelect: (buildingId: string) => void;
 };
 
 type BuildingWithDistance = Building & { distance: number };
@@ -31,7 +33,8 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   return R * 2 * Math.asin(Math.sqrt(a));
 };
 
-export default function CombinedFilterDialog({ buildings, map, onDialogClose }: CombinedFilterDialogProps) {
+export default function CombinedFilterDialog({ buildings, map, onDialogClose, onBuildingSelect }: CombinedFilterDialogProps) {
+  const [selectedBuilding, setSelectedBuilding] = useState<string>('');
   const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
   const [isGroupFinderEnabled, setIsGroupFinderEnabled] = useState(false);
   const [isFinding, setIsFinding] = useState(false);
@@ -45,95 +48,101 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
     );
   };
 
-  const findNearest = () => {
+  const findIdealPC = () => {
     setIsFinding(true);
+    if (selectedBuilding) {
+      // Logic if a building is pre-selected
+      const building = buildings.find(b => b.id === selectedBuilding);
+      if (building && hasMatchingPc(building)) {
+        toast({
+          title: "Spot Found!",
+          description: `An available spot matching your criteria was found in ${building.name}.`,
+          duration: 3000,
+        });
+        onBuildingSelect(building.id);
+        onDialogClose();
+      } else {
+        toast({
+          variant: "destructive",
+          title: "No Spots Found",
+          description: `No available computers found in ${building?.name} matching your criteria.`,
+        });
+      }
+      setIsFinding(false);
+    } else {
+      // Logic to find the nearest building if none is selected
+      findNearest();
+    }
+  };
+  
+  const hasMatchingPc = (building: Building): boolean => {
+    if (isGroupFinderEnabled) {
+      return building.floors.some(floor => {
+        const pcsByCluster: { [key: number]: PC[] } = {};
+        floor.pcs.forEach(pc => {
+          if (pc.clusterId) {
+            if (!pcsByCluster[pc.clusterId]) pcsByCluster[pc.clusterId] = [];
+            pcsByCluster[pc.clusterId].push(pc);
+          }
+        });
+        return Object.values(pcsByCluster).some(cluster => {
+          const availablePcsInCluster = cluster.filter(pc =>
+            pc.status === 'available' &&
+            (selectedSoftware.length === 0 || selectedSoftware.every(s => pc.software.includes(s)))
+          );
+          return availablePcsInCluster.length > 1;
+        });
+      });
+    } else {
+      return building.floors.flatMap(f => f.pcs).some(pc => 
+        pc.status === 'available' &&
+        (selectedSoftware.length === 0 || selectedSoftware.every(s => pc.software.includes(s)))
+      );
+    }
+  };
+
+  const findNearest = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const currentPosition = { lat: latitude, lng: longitude };
 
-        let nearestBuilding: BuildingWithDistance | null = null;
+        const matchingBuildings = buildings.filter(b => hasMatchingPc(b));
 
-        if (isGroupFinderEnabled) {
-          nearestBuilding = findNearestGroupSpot(currentPosition);
-        } else {
-          nearestBuilding = findNearestSinglePC(currentPosition);
+        if (matchingBuildings.length === 0) {
+          toast({
+            variant: "destructive",
+            title: "No Spots Found",
+            description: "No available computers found anywhere matching your criteria.",
+          });
+          setIsFinding(false);
+          return;
         }
 
-        if (nearestBuilding) {
-            onDialogClose();
-            toast({
-                title: "Nearest PC Found!",
-                description: `The closest available spot is in ${nearestBuilding.name}.`,
-                duration: 3000,
-            });
-        } else {
-            toast({
-                variant: "destructive",
-                title: "No Spots Found",
-                description: "No available computers found matching your criteria.",
-            });
-        }
+        const buildingsWithDistance = matchingBuildings.map(building => ({
+          ...building,
+          distance: getDistance(latitude, longitude, building.coordinates.latitude, building.coordinates.longitude),
+        }));
+
+        const nearestBuilding = buildingsWithDistance.sort((a, b) => a.distance - b.distance)[0];
+        
+        toast({
+            title: "Nearest PC Found!",
+            description: `The closest available spot is in ${nearestBuilding.name}.`,
+            duration: 3000,
+        });
+        onBuildingSelect(nearestBuilding.id);
+        onDialogClose();
         setIsFinding(false);
       },
       () => {
         toast({
           variant: "destructive",
           title: "Location not available",
-          description: "Could not determine your current location. Please enable location services.",
+          description: "Could not determine your current location. Please enable location services or select a building.",
         });
         setIsFinding(false);
       }
     );
-  };
-
-  const findNearestSinglePC = (currentPosition: { lat: number; lng: number }): BuildingWithDistance | null => {
-    const availableBuildings = buildings.filter(b => 
-      b.floors.flatMap(f => f.pcs).some(pc => 
-        pc.status === 'available' &&
-        (selectedSoftware.length === 0 || selectedSoftware.every(s => pc.software.includes(s)))
-      )
-    );
-
-    if (availableBuildings.length === 0) return null;
-
-    const buildingsWithDistance = availableBuildings.map(building => ({
-      ...building,
-      distance: getDistance(currentPosition.lat, currentPosition.lng, building.coordinates.latitude, building.coordinates.longitude),
-    }));
-
-    return buildingsWithDistance.sort((a, b) => a.distance - b.distance)[0];
-  };
-
-  const findNearestGroupSpot = (currentPosition: { lat: number; lng: number }): BuildingWithDistance | null => {
-      const buildingsWithGroupSpots = buildings.filter(building => {
-          return building.floors.some(floor => {
-              const pcsByCluster: { [key: number]: PC[] } = {};
-              floor.pcs.forEach(pc => {
-                  if (pc.clusterId) {
-                      if (!pcsByCluster[pc.clusterId]) pcsByCluster[pc.clusterId] = [];
-                      pcsByCluster[pc.clusterId].push(pc);
-                  }
-              });
-
-              return Object.values(pcsByCluster).some(cluster => {
-                  const availablePcsInCluster = cluster.filter(pc =>
-                      pc.status === 'available' &&
-                      (selectedSoftware.length === 0 || selectedSoftware.every(s => pc.software.includes(s)))
-                  );
-                  return availablePcsInCluster.length > 1; // At least 2 PCs for a group spot
-              });
-          });
-      });
-
-      if (buildingsWithGroupSpots.length === 0) return null;
-
-      const buildingsWithDistance = buildingsWithGroupSpots.map(building => ({
-          ...building,
-          distance: getDistance(currentPosition.lat, currentPosition.lng, building.coordinates.latitude, building.coordinates.longitude),
-      }));
-
-      return buildingsWithDistance.sort((a, b) => a.distance - b.distance)[0];
   };
 
 
@@ -144,9 +153,21 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
           <SlidersHorizontal />
           Find a PC
         </CardTitle>
-        <CardDescription>Select software and find the nearest spot.</CardDescription>
+        <CardDescription>Select your criteria and find the ideal spot.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        <div>
+            <Label className="font-semibold">Building (Optional)</Label>
+            <Select onValueChange={setSelectedBuilding} value={selectedBuilding}>
+              <SelectTrigger>
+                <SelectValue placeholder="Any building (find nearest)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Any building (find nearest)</SelectItem>
+                {buildings.map(b => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+        </div>
         <div className="space-y-2">
             <Label className="font-semibold">Software</Label>
             <div className="grid grid-cols-2 gap-4 max-h-48 overflow-y-auto p-1">
@@ -179,13 +200,13 @@ export default function CombinedFilterDialog({ buildings, map, onDialogClose }: 
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={findNearest} className="w-full" disabled={isFinding}>
+        <Button onClick={findIdealPC} className="w-full" disabled={isFinding}>
             {isFinding ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <LocateFixed className="mr-2" />
             )}
-            {isFinding ? 'Finding...' : 'Find Nearest PC'}
+            {isFinding ? 'Finding...' : 'Find PC'}
         </Button>
       </CardFooter>
     </Card>

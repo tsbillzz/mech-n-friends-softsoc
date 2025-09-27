@@ -4,7 +4,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { Building } from '@/lib/data';
-import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { Skeleton } from '../ui/skeleton';
 
 type CampusMapProps = {
@@ -20,35 +20,25 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
   });
 
   const [map, setMap] = mapRef;
-  const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
   const hasCenteredOnUser = useRef(false);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      const watchId = navigator.geolocation.watchPosition(
+    if (map && !hasCenteredOnUser.current && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          const newPosition = { lat: latitude, lng: longitude };
+          const userPosition = { lat: latitude, lng: longitude };
           
-          setCurrentPosition(newPosition);
-
-          // Center map on the user's location ONLY the first time it's received
-          if (map && !hasCenteredOnUser.current) {
-             map.panTo(newPosition);
+          if (!hasCenteredOnUser.current) {
+             map.panTo(userPosition);
              map.setZoom(17);
-             hasCenteredOnUser.current = true; // Mark as centered
+             hasCenteredOnUser.current = true;
           }
         },
         (error) => {
           console.error("Error getting user's location", error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
         }
       );
-      return () => navigator.geolocation.clearWatch(watchId);
     }
   }, [map]);
   
@@ -98,19 +88,6 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
             title={building.name}
           />
         ))}
-        {currentPosition && (
-          <Circle
-            center={currentPosition}
-            radius={10}
-            options={{
-              strokeColor: '#4285F4',
-              strokeOpacity: 1,
-              strokeWeight: 2,
-              fillColor: '#4285F4',
-              fillOpacity: 0.5,
-            }}
-          />
-        )}
       </GoogleMap>
     );
   };

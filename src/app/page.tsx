@@ -100,6 +100,7 @@ export default function Home() {
                 buildings={buildings}
                 map={mapRef[0]}
                 onDialogClose={() => setIsFilterDialogOpen(false)}
+                onBuildingSelect={handleSelectBuilding}
              />
           </DialogContent>
         </Dialog>
