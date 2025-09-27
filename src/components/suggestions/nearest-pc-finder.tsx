@@ -9,6 +9,7 @@ import { Loader2, LocateFixed } from 'lucide-react';
 type NearestPcFinderProps = {
   buildings: Building[];
   onSelectBuilding: (buildingId: string) => void;
+  selectedSoftware: string[];
 };
 
 type BuildingWithDistance = Building & {
@@ -27,7 +28,7 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   return R * 2 * Math.asin(Math.sqrt(a));
 };
 
-export default function NearestPcFinder({ buildings, onSelectBuilding }: NearestPcFinderProps) {
+export default function NearestPcFinder({ buildings, onSelectBuilding, selectedSoftware }: NearestPcFinderProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nearestBuilding, setNearestBuilding] = useState<BuildingWithDistance | null>(null);
@@ -47,11 +48,14 @@ export default function NearestPcFinder({ buildings, onSelectBuilding }: Nearest
         const { latitude, longitude } = position.coords;
 
         const availableBuildings = buildings.filter(b => 
-          b.floors.flatMap(f => f.pcs).some(pc => pc.status === 'available')
+          b.floors.flatMap(f => f.pcs).some(pc => 
+            pc.status === 'available' &&
+            (selectedSoftware.length === 0 || selectedSoftware.every(s => pc.software.includes(s)))
+          )
         );
 
         if (availableBuildings.length === 0) {
-          setError("No available PCs found in any building right now.");
+          setError("No available PCs found matching your criteria.");
           setLoading(false);
           return;
         }
@@ -80,7 +84,7 @@ export default function NearestPcFinder({ buildings, onSelectBuilding }: Nearest
           <LocateFixed />
           Nearest PC Finder
         </CardTitle>
-        <CardDescription>Find the closest building with an available PC.</CardDescription>
+        <CardDescription>Find the closest building with a PC that meets your software needs.</CardDescription>
       </CardHeader>
       <CardContent>
         <Button onClick={handleFindNearest} disabled={loading} className="w-full">

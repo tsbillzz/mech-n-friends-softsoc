@@ -11,6 +11,7 @@ import SuggestionWidgets from '@/components/suggestions/suggestion-widgets';
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [buildings, setBuildings] = useState<Building[]>(initialBuildings);
+  const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -52,6 +53,14 @@ export default function Home() {
     setSelectedBuilding(null);
   };
 
+  const handleSoftwareChange = (software: string) => {
+    setSelectedSoftware(prev =>
+      prev.includes(software)
+        ? prev.filter(s => s !== software)
+        : [...prev, software]
+    );
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background text-foreground font-body">
       <Header />
@@ -65,7 +74,12 @@ export default function Home() {
                 <CampusMap buildings={buildings} onSelectBuilding={handleSelectBuilding} />
               </div>
               <div className="w-full lg:w-1/3">
-                <SuggestionWidgets buildings={buildings} onSelectBuilding={handleSelectBuilding} />
+                <SuggestionWidgets 
+                  buildings={buildings} 
+                  onSelectBuilding={handleSelectBuilding}
+                  selectedSoftware={selectedSoftware}
+                  onSoftwareChange={handleSoftwareChange}
+                />
               </div>
             </div>
           )}
