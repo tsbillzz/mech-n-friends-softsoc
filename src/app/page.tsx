@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { SlidersHorizontal, PersonStanding } from 'lucide-react';
 import QuietSpots from '@/components/suggestions/quiet-spots';
 import CombinedFilterDialog from '@/components/suggestions/combined-filter-dialog';
+import Header from '@/components/layout/header';
 
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
@@ -76,12 +77,15 @@ export default function Home() {
 
   return (
     <div className="h-screen w-screen relative">
+       <div className="absolute top-0 left-0 right-0 z-10">
+        <Header />
+      </div>
       <CampusMap 
         buildings={buildings} 
         onSelectBuilding={handleSelectBuilding}
         mapRef={mapRef}
       />
-      <div className="absolute top-4 right-4 flex flex-col gap-2">
+      <div className="absolute top-20 right-4 flex flex-col gap-2">
         <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
           <DialogTrigger asChild>
             <Button size="icon" className="rounded-full h-12 w-12 shadow-lg">
