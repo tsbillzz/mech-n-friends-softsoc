@@ -43,34 +43,36 @@ const generatePcs = (count: number, prefix: string): PC[] => {
   let clusterCounter = 0;
 
   for (let i = 0; i < count; i++) {
-    const software = availableSoftware.filter(() => Math.random() > 0.6);
+    const software = availableSoftware.filter((_, index) => (i + index) % 4 !== 0);
     if (software.length === 0) {
       software.push('Microsoft Office');
     }
 
-    const randomStatus = Math.random();
     const pc: PC = {
       id: `${prefix}-PC-${i + 1}`,
-      status: randomStatus > 0.5 ? 'available' : 'occupied',
+      status: i % 3 === 0 ? 'occupied' : 'available',
       position: {
-        top: `${Math.floor(Math.random() * 80) + 10}%`,
-        left: `${Math.floor(Math.random() * 90) + 5}%`,
+        top: `${(i * 3) % 80 + 10}%`,
+        left: `${(i * 7) % 90 + 5}%`,
       },
       software: software,
     };
-
+    
     // Create some clusters
     if (i % 7 === 0 && i + 2 < count) {
       clusterCounter++;
-      const clusterSize = Math.floor(Math.random() * 3) + 2; // 2 to 4 PCs
+      const clusterSize = 3;
+      const baseTop = parseInt(pc.position.top);
+      const baseLeft = parseInt(pc.position.left);
+      
       for (let j = 0; j < clusterSize && i + j < count; j++) {
         pcs.push({
           ...pc,
           id: `${prefix}-PC-${i + 1 + j}`,
           clusterId: clusterCounter,
           position: {
-            top: `${parseInt(pc.position.top) + j * 2}%`,
-            left: `${parseInt(pc.position.left) + j * 4}%`,
+            top: `${baseTop + j * 2}%`,
+            left: `${baseLeft + j * 4}%`,
           },
         });
       }
