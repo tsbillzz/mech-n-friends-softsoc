@@ -148,43 +148,43 @@ export default function BuildingView({ building, onBack }: BuildingViewProps) {
 
   return (
     <div className="animate-in fade-in-50 duration-500">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
         <div>
-          <Button onClick={onBack} variant="ghost" className="mb-2">
+          <Button onClick={onBack} variant="ghost" className="mb-2 -ml-4 md:-ml-2">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Campus Map
           </Button>
-          <h2 className="text-4xl font-bold font-headline">{localBuilding.name}</h2>
+          <h2 className="text-3xl md:text-4xl font-bold font-headline">{localBuilding.name}</h2>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-emerald-500" />
-            <span className="text-sm">Available</span>
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-emerald-500" />
+            <span className="text-xs md:text-sm">Available</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-rose-500" />
-            <span className="text-sm">Occupied</span>
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-rose-500" />
+            <span className="text-xs md:text-sm">Occupied</span>
           </div>
           <div className="flex items-center gap-2">
-            <Triangle className="w-4 h-4 text-yellow-500 fill-current" />
-            <span className="text-sm">Broken</span>
+            <Triangle className="w-3 h-3 md:w-4 md:h-4 text-yellow-500 fill-current" />
+            <span className="text-xs md:text-sm">Broken</span>
           </div>
           <div className="flex items-center gap-2">
-            <Wrench className="w-4 h-4 text-blue-500" />
-            <span className="text-sm">Maintenance</span>
+            <Wrench className="w-3 h-3 md:w-4 md:h-4 text-blue-500" />
+            <span className="text-xs md:text-sm">Maintenance</span>
           </div>
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-purple-500" />
-            <span className="text-sm">Group Area</span>
+            <Users className="w-3 h-3 md:w-4 md:h-4 text-purple-500" />
+            <span className="text-xs md:text-sm">Group Area</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded-full bg-gray-400" />
-            <span className="text-sm">Filtered Out</span>
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-gray-400" />
+            <span className="text-xs md:text-sm">Filtered Out</span>
           </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2">
             <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList>

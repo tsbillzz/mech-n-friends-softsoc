@@ -19,7 +19,7 @@ type AdminLoginModalProps = {
   pc: PC;
 };
 
-export default function AdminLoginModal({ isOpen, onClose, onSuccess, pc }: AdminLoginModalProps) {
+export default function AdminLoginModal({ isOpen, onClose, onSuccess, pc }: AdminLoginLoginModalProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -44,11 +44,11 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess, pc }: Admi
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Admin Authentication Required</DialogTitle>
+          <DialogTitle>Admin Authentication</DialogTitle>
           <DialogDescription>
-            Enter admin credentials to {actionText.toLowerCase()} maintenance for PC: {pc.id}.
+            Enter credentials to {actionText.toLowerCase()} maintenance for PC: {pc.id}.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -77,7 +77,7 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess, pc }: Admi
           </div>
           {error && <p className="col-span-4 text-center text-sm text-destructive">{error}</p>}
         </div>
-        <DialogFooter>
+        <DialogFooter className="flex-col-reverse sm:flex-row gap-2 sm:gap-0">
           <Button type="button" variant="outline" onClick={handleClose}>Cancel</Button>
           <Button type="submit" onClick={handleLogin}>
             {actionText} Maintenance
