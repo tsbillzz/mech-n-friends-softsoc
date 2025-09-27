@@ -1,14 +1,47 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Building } from '@/lib/data';
-import { buildings } from '@/lib/data';
+import { buildings as initialBuildings } from '@/lib/data';
 import Header from '@/components/layout/header';
 import CampusMap from '@/components/map/campus-map';
 import BuildingView from '@/components/building/building-view';
+import QuietSpots from '@/components/suggestions/quiet-spots';
 
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
+  const [buildings, setBuildings] = useState<Building[]>(initialBuildings);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setBuildings(currentBuildings => {
+        return currentBuildings.map(building => {
+          const newBuildingData = JSON.parse(JSON.stringify(building));
+          
+          if (newBuildingData.floors.length === 0) return newBuildingData;
+
+          const randomFloorIndex = Math.floor(Math.random() * newBuildingData.floors.length);
+          const floor = newBuildingData.floors[randomFloorIndex];
+
+          if (floor && floor.pcs.length > 0) {
+            const nonSpecialStatusPcs = floor.pcs.filter((pc: { status: string; }) => pc.status !== 'broken' && pc.status !== 'under maintenance');
+            if (nonSpecialStatusPcs.length > 0) {
+              const randomPcIndex = Math.floor(Math.random() * nonSpecialStatusPcs.length);
+              const pcToToggle = nonSpecialStatusPcs[randomPcIndex];
+              
+              const originalPc = floor.pcs.find((p: { id: any; }) => p.id === pcToToggle.id);
+              if (originalPc) {
+                originalPc.status = originalPc.status === 'available' ? 'occupied' : 'available';
+              }
+            }
+          }
+          return newBuildingData;
+        });
+      });
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleSelectBuilding = (buildingId: string) => {
     const building = buildings.find(b => b.id === buildingId);
@@ -27,7 +60,14 @@ export default function Home() {
           {selectedBuilding ? (
             <BuildingView building={selectedBuilding} onBack={handleBackToMap} />
           ) : (
-            <CampusMap buildings={buildings} onSelectBuilding={handleSelectBuilding} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <CampusMap buildings={buildings} onSelectBuilding={handleSelectBuilding} />
+              </div>
+              <div className="lg:col-span-1">
+                <QuietSpots buildings={buildings} onSelectBuilding={handleSelectBuilding}/>
+              </div>
+            </div>
           )}
         </div>
       </main>
