@@ -3,17 +3,23 @@
 import { useState, useEffect } from 'react';
 import type { Building } from '@/lib/data';
 import { buildings as initialBuildings } from '@/lib/data';
-import Header from '@/components/layout/header';
-import CampusMap from '@/components/map/campus-map';
 import BuildingView from '@/components/building/building-view';
-import SuggestionWidgets from '@/components/suggestions/suggestion-widgets';
+import CampusMap from '@/components/map/campus-map';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { SlidersHorizontal, Users, PersonStanding, LocateFixed } from 'lucide-react';
+import SoftwareFilter from '@/components/suggestions/software-filter';
+import QuietSpots from '@/components/suggestions/quiet-spots';
+import GroupStudyFinder from '@/components/suggestions/group-study-finder';
 
 export default function Home() {
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
   const [buildings, setBuildings] = useState<Building[]>(initialBuildings);
   const [selectedSoftware, setSelectedSoftware] = useState<string[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const intervalId = setInterval(() => {
       setBuildings(currentBuildings => {
         return currentBuildings.map(building => {
@@ -61,30 +67,56 @@ export default function Home() {
     );
   };
 
+  if (!isClient) {
+    return null;
+  }
+  
+  if (selectedBuilding) {
+    return (
+      <div className="h-screen w-screen p-4 md:p-8 overflow-auto">
+        <BuildingView building={selectedBuilding} onBack={handleBackToMap} />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground font-body">
-      <Header />
-      <main className="flex-1 overflow-auto p-4 md:p-8">
-        <div className="container mx-auto h-full">
-          {selectedBuilding ? (
-            <BuildingView building={selectedBuilding} onBack={handleBackToMap} />
-          ) : (
-            <div className="flex flex-col lg:flex-row gap-8 items-start">
-              <div className="w-full lg:w-2/3">
-                <CampusMap buildings={buildings} onSelectBuilding={handleSelectBuilding} />
-              </div>
-              <div className="w-full lg:w-1/3">
-                <SuggestionWidgets 
-                  buildings={buildings} 
-                  onSelectBuilding={handleSelectBuilding}
-                  selectedSoftware={selectedSoftware}
-                  onSoftwareChange={handleSoftwareChange}
-                />
-              </div>
+    <div className="h-screen w-screen relative">
+      <CampusMap 
+        buildings={buildings} 
+        onSelectBuilding={handleSelectBuilding}
+        selectedSoftware={selectedSoftware}
+      />
+      <div className="absolute top-4 right-4 flex flex-col gap-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="icon" className="rounded-full h-12 w-12 shadow-lg">
+              <SlidersHorizontal />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Filters & Study Spaces</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <SoftwareFilter selectedSoftware={selectedSoftware} onSoftwareChange={handleSoftwareChange} />
+              <GroupStudyFinder buildings={buildings} onSelectBuilding={handleSelectBuilding} />
             </div>
-          )}
-        </div>
-      </main>
+          </DialogContent>
+        </Dialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="icon" className="rounded-full h-12 w-12 shadow-lg">
+              <PersonStanding />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Quiet Spots</DialogTitle>
+            </DialogHeader>
+            <QuietSpots buildings={buildings} onSelectBuilding={onSelectBuilding} />
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
