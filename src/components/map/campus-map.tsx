@@ -6,7 +6,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import type { Building } from '@/lib/data';
 import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
 import { Skeleton } from '../ui/skeleton';
-import { useToast } from '@/hooks/use-toast';
 
 type CampusMapProps = {
   buildings: Building[];
@@ -28,7 +27,15 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
       const watchId = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          setCurrentPosition({ lat: latitude, lng: longitude });
+          const newPosition = { lat: latitude, lng: longitude };
+          
+          setCurrentPosition(newPosition);
+
+          // Center map on the user's location the first time it's received
+          if (map && !currentPosition) {
+             map.panTo(newPosition);
+             map.setZoom(17);
+          }
         },
         (error) => {
           console.error("Error getting user's location", error);
@@ -41,7 +48,7 @@ export default function CampusMap({ buildings, onSelectBuilding, mapRef }: Campu
       );
       return () => navigator.geolocation.clearWatch(watchId);
     }
-  }, []);
+  }, [map, currentPosition]);
   
   const initialCenter = useMemo(() => {
     if (buildings.length === 0) {
