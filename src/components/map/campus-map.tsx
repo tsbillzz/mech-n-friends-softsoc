@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { Building } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
 import { Skeleton } from '../ui/skeleton';
 
 type CampusMapProps = {
@@ -22,7 +22,29 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
   });
 
-  const center = useMemo(() => {
+  const [currentPosition, setCurrentPosition] = useState<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCurrentPosition({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          console.error("Error getting user's location", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+      return () => navigator.geolocation.clearWatch(watchId);
+    }
+  }, []);
+  
+  const initialCenter = useMemo(() => {
     if (buildings.length === 0) {
       return { lat: -33.88, lng: 151.19 }; // Default center
     }
@@ -43,7 +65,7 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
     return (
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={center}
+        center={initialCenter}
         zoom={16}
       >
         {buildings.map((building) => (
@@ -54,6 +76,19 @@ export default function CampusMap({ buildings, onSelectBuilding }: CampusMapProp
             title={building.name}
           />
         ))}
+        {currentPosition && (
+          <Circle
+            center={currentPosition}
+            radius={20} // Radius in meters
+            options={{
+              strokeColor: '#4285F4',
+              strokeOpacity: 1,
+              strokeWeight: 2,
+              fillColor: '#4285F4',
+              fillOpacity: 0.5,
+            }}
+          />
+        )}
       </GoogleMap>
     );
   };
